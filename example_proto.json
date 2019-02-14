@@ -1,0 +1,32 @@
+{
+	"version" : [0, 0, 0],
+	"protocol" : {
+		"header" : 4,
+		"flags" : ["HeartBeat", "ConnectionInfo", "TextMessage", "ImageMessage"],
+	},
+
+	"HeartBeat" : [
+		{"uuid" : "string"},
+		{"usrName"   : "string"},
+		{"publicKey" : "string"},
+		{"timestamp" : "uint32"}
+	],
+
+	"ConnectionInfo" : [
+		{"uuid" : "string"},
+		{"peers" : "string"}
+	],
+	
+	"TextMessage" : [
+		{"uuid" : "string"},
+		{"msgId" : "string"}
+		{"msg" : "string"}
+	],
+	
+	"ImageMessage" : [
+		{"uuid" : "string"},
+		{"msgId" : "string"}
+		{"msg" : "string"}
+	],
+
+}
