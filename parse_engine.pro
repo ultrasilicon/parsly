@@ -20,4 +20,4 @@ mac {
 }
 
 CONFIG += link_pkgconfig
-#PKGCONFIG += libuv
+PKGCONFIG += gtest

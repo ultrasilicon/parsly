@@ -14,6 +14,9 @@
 
 template <typename T>
 struct SizedMask {
+  SizedMask()
+  {}
+
   SizedMask(char* dat)
     : data(dat)
   {
