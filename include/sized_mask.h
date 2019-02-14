@@ -20,7 +20,7 @@ struct SizedMask {
   SizedMask(char* dat)
     : data(dat)
   {
-    header = strlen(dat);
+    header = (T)strlen(dat);
   }
 
   T header;

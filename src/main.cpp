@@ -13,37 +13,49 @@ using namespace nlohmann;
 TEST(TestConstructStr, Cons1)
 {
     char* s = "hello?";
-    EXPECT_EQ("ell", string(constructStr(s + 1, s + 4)));
+    EXPECT_EQ("ell", string(constructStr(s + 1, 3)));
 }
 
 
 TEST(TestRedeemVal, SingleLayerPacket)
 {
+  //! [6:hello?]
   char* s = "hello?";
-  SizedMask<uint32_t> *m = new SizedMask<uint32_t>(s);
-  char* stream = (char*) malloc(sizeof(m));
-  EXPECT_EQ("hello?", string(redeemVal<uint32_t, char*>((char*) m)));
-}
-
-TEST(TestRedeemVal, MultiLayerPacket)
-{
-  char* s = "hello?";
-  char* stream = (char*) malloc(sizeof(uint32_t) + sizeof(uint32_t) + strlen(s));
+  char* stream = (char*) malloc( sizeof(uint32_t) + strlen(s) );
   char* pos = stream;
 
-  int data = sizeof(uint32_t) + strlen(s);
-  memcpy(pos, (char*)&data, sizeof(uint32_t));
-  pos += sizeof(uint32_t);
-
-  int data2 = strlen(s);
-  memcpy(pos,  (char*)&data2, sizeof(uint32_t));
+  auto header = strlen(s);
+  memcpy(pos, (char*)&header, sizeof(uint32_t));
   pos += sizeof(uint32_t);
 
   strcpy(pos, s);
   pos += strlen(s);
 
-  auto scope = getScope<uint32_t>((char*) stream);
-  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(scope)));
+  EXPECT_EQ("hello?", string(redeemVal<uint32_t, char*>(stream)));
+}
+
+TEST(TestRedeemVal, MultiLayerPacket)
+{
+  //! [10:[6:hello?]]
+  char* s = "hello?";
+  char* stream = (char*) malloc( sizeof(uint32_t) + sizeof(uint32_t) + strlen(s) );
+  char* pos = stream;
+
+  long header;
+
+  header = sizeof(uint32_t) + strlen(s);
+  memcpy(pos, (char*)&header, sizeof(uint32_t));
+  pos += sizeof(uint32_t);
+
+  header = strlen(s);
+  memcpy(pos,  (char*)&header, sizeof(uint32_t));
+  pos += sizeof(uint32_t);
+
+  strcpy(pos, s);
+  pos += strlen(s);
+
+  auto begin = scopeBegin<uint32_t>(stream);
+  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(begin)));
 }
 
 TEST(TestPlayground, Playground)

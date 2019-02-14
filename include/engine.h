@@ -20,38 +20,36 @@ private:
 
 using pe_str_len_t = uint32_t;
 
-static char* constructStr(char* b, char* e)
+static char* constructStr(char* b, size_t len)
 {
-  char *p = b;
-  long len = e - b;
   auto val = (char*) malloc(len + 1);
-  for(long c = 0; c < len; ++ c, ++ p) {
-        val[c] = *p;
+  for(long c = 0; c < len; ++ c, ++ b) {
+        val[c] = *b;
      }
   val[len] = '\0';
   return val;
 }
 
 template <typename _HeaderT>
-char* scopeBegin(char *stream)
-{
-  return stream + sizeof(_HeaderT);
-}
-
-template <typename _HeaderT>
-char* scopeEnd(char *stream)
-{
-  return stream + sizeof(_HeaderT) + sizeof(((SizedMask<_HeaderT>*) stream)->header);
-}
-
-template <typename _HeaderT>
-_HeaderT scopeLen(char *stream)
+constexpr _HeaderT scopeLen(char *stream)
 {
   return ((SizedMask<_HeaderT>*) stream)->header;
 }
 
 template <typename _HeaderT>
-std::pair<char*, char*> getScope(char *stream)
+constexpr char* scopeBegin(char *stream)
+{
+  return stream + sizeof(_HeaderT);
+}
+
+template <typename _HeaderT>
+constexpr char* scopeEnd(char *stream)
+{
+  return scopeBegin<_HeaderT>(stream) + scopeLen<_HeaderT>(stream);
+}
+
+template <typename _HeaderT>
+constexpr std::pair<char*, char*> getScope(char *stream)
 {
   return std::make_pair(scopeBegin<_HeaderT>(stream), scopeEnd<_HeaderT>(stream));
 }
@@ -60,33 +58,27 @@ template <typename _ValT>
 _ValT redeemVal(char *b)
 {
   _ValT r = ((SizedMask<_ValT>*) b)->header;
-  b += sizeof(_ValT);
+//  b += sizeof(_ValT);
   return r;
 }
 
 template <typename _HeaderT, typename _ValT>
-_ValT redeemVal(std::pair<char*, char*> scope)
+/*constexpr*/ _ValT redeemVal(char* stream)
 {
-  _HeaderT len = scopeLen<_HeaderT>(scope.first);
-  char *p = scope.first + sizeof(_HeaderT);
-  auto val = (char*) malloc(len + 1);
-  for(_HeaderT c = 0; c < len; ++ c, ++ p) {
-        val[c] = *p;
-     }
-  val[len] = '\0';
-  return (_ValT)val;
+  return (_ValT)constructStr(stream + sizeof(_HeaderT),
+                             scopeLen<_HeaderT>(stream));
 }
 
-template <typename _HeaderT, typename _ValT>
-_ValT redeemVal(char* stream)
-{
-  _HeaderT scopeLen = ((SizedMask<_HeaderT>*) stream)->header;
-  auto val = (char*) malloc(scopeLen + 1);
-  strcpy(val, ((SizedMask<_HeaderT>*) stream)->data);
-  val[scopeLen] = '\0';
-  stream += sizeof(_HeaderT) + scopeLen;
-  return (_ValT)val;
-}
+//template <typename _HeaderT, typename _ValT>
+//static _ValT redeeemVal(char* stream)
+//{
+//  _HeaderT scopeLen = ((SizedMask<_HeaderT>*) stream)->header;
+//  auto val = (char*) malloc(scopeLen + 1);
+//  strcpy(val, ((SizedMask<_HeaderT>*) stream)->data);
+//  val[scopeLen] = '\0';
+//  stream += sizeof(_HeaderT) + scopeLen;
+//  return (_ValT)val;
+//}
 
 
 #endif // PARSELYENGINE_H
