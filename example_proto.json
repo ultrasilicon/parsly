@@ -1,7 +1,7 @@
 {
 	"version" : [0, 0, 0],
 	"protocol" : {
-		"header" : 4,
+		"header" : "uint32",
 		"flags" : ["HeartBeat", "ConnectionInfo", "TextMessage", "ImageMessage"],
 	},
 

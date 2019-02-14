@@ -69,16 +69,4 @@ template <typename _HeaderT, typename _ValT>
                              scopeLen<_HeaderT>(stream));
 }
 
-//template <typename _HeaderT, typename _ValT>
-//static _ValT redeeemVal(char* stream)
-//{
-//  _HeaderT scopeLen = ((SizedMask<_HeaderT>*) stream)->header;
-//  auto val = (char*) malloc(scopeLen + 1);
-//  strcpy(val, ((SizedMask<_HeaderT>*) stream)->data);
-//  val[scopeLen] = '\0';
-//  stream += sizeof(_HeaderT) + scopeLen;
-//  return (_ValT)val;
-//}
-
-
 #endif // PARSELYENGINE_H
