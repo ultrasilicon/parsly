@@ -28,15 +28,14 @@ int main()
 
 //  printf(":%s\n", (char*) &str);
 
-  char* s = "hello?";
+  char s[] = "hello?";
 
   SizedScope<uint32_t> *scp = new SizedScope<uint32_t>(s);
 
   char* stream = (char*) malloc(sizeof(scp));
-  memcpy(stream, scp, sizeof(scp));
 
 
-  printf("\n%s:%d\n", redeemVal<uint32_t, char*>(stream), sizeof (scp));
+  printf("\n%s:%d\n", redeemVal<uint32_t, char*>((char*) scp), sizeof (scp));
 
 
 

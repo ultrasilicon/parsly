@@ -5,6 +5,7 @@
 
 #include <tuple>
 #include <string>
+#include <string.h>
 
 
 class Engine
@@ -53,13 +54,16 @@ T redeemVal(char *b)
 template <typename Header, typename T>
 T redeemVal(char* stream)
 {
-  char *b = scopeBegin<T>(stream);
-  char *e = scopeEnd<T>(stream);
-  long scopeLen = e - b;
+//  char *b = scopeBegin<T>(stream);
+//  char *e = scopeEnd<T>(stream);
+//  long scopeLen = e - b;
+  long scopeLen = ((SizedMask<Header>*) stream)->header;
+  SizedMask<Header>* test = ((SizedMask<Header>*) stream);
+
   auto val = (char*) malloc(scopeLen + 1);
-  memcpy(val, b, scopeLen);
+  strcpy(val, ((SizedMask<Header>*) stream)->data);
   val[scopeLen] = '\0';
-  stream = e;
+  stream += sizeof(Header) + scopeLen;
   return val;
 }
 
