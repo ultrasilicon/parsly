@@ -3,15 +3,17 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-INCLUDEPATH += ../../../include
+INCLUDEPATH += ./include
 
-SOURCES += main.cpp \
-    engine.cpp
+SOURCES += \
+    src/main.cpp \
+    src/engine.cpp
 
 
 HEADERS += \
-    engine.h \
-    sized_mask.h
+    include/json.hpp \
+    include/engine.h \
+    include/sized_mask.h
 
 mac {
     PKG_CONFIG = /usr/local/bin/pkg-config

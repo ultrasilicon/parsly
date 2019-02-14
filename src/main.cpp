@@ -2,10 +2,16 @@
 
 #include "engine.h"
 
+#include "json.hpp"
+
 using namespace std;
+using namespace nlohmann;
+
 
 int main()
 {
+    json field1Json = json::array({"time", "uuid", "content", "pubkey"});
+    json packetJson = json::array({0, field1Json});
 
 //  uint32_t size = 10;
 //  char* str = (char*) malloc(4 + 10);
