@@ -57,11 +57,11 @@ T redeemVal(char* stream)
 //  char *b = scopeBegin<T>(stream);
 //  char *e = scopeEnd<T>(stream);
 //  long scopeLen = e - b;
-  long scopeLen = ((SizedMask<Header>*) stream)->header;
-  SizedMask<Header>* test = ((SizedMask<Header>*) stream);
+  long scopeLen = ((SizedScope<Header>*) stream)->header;
+//  SizedMask<Header>* test = ((SizedMask<Header>*) stream);
 
   auto val = (char*) malloc(scopeLen + 1);
-  strcpy(val, ((SizedMask<Header>*) stream)->data);
+  strcpy(val, ((SizedScope<Header>*) stream)->data);
   val[scopeLen] = '\0';
   stream += sizeof(Header) + scopeLen;
   return val;
