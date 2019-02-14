@@ -9,7 +9,7 @@
 using namespace std;
 using namespace nlohmann;
 
-TEST(SizedMask, SingleLayerPacket)
+TEST(redeemVal, SingleLayerPacket)
 {
   char s[] = "hello?";
   SizedMask<uint32_t> *m = new SizedMask<uint32_t>(s);
@@ -17,15 +17,20 @@ TEST(SizedMask, SingleLayerPacket)
   EXPECT_EQ("hello?", string(redeemVal<uint32_t, char*>((char*) m)));
 }
 
-TEST(SizedMask, MultiLayerPacket)
+TEST(redeemVal, MultiLayerPacket)
 {
-  char s[] = "hello?";
-  SizedMask<uint32_t> *m1 = new SizedMask<uint32_t>(s);
-  SizedMask<uint32_t> *m2 = new SizedMask<uint32_t>();
-  m2->data = (char*) malloc(sizeof (m1));
-  strcpy(m2->data, (char*)m1);
-  m2->header = sizeof (m1);
-  printf("Data: %s\n\n", redeemVal<uint32_t, char*>(redeemVal<uint32_t, char*>((char*) m2)));
+  char* s = "hello?";
+  int Ssize = strlen(s);
+  char* stream = (char*) malloc(sizeof(uint32_t) + sizeof(uint32_t) + strlen(s));
+  int data = sizeof(uint32_t) + strlen(s);
+  memcpy(stream, (char*)&data, sizeof(uint32_t));
+  stream += sizeof(uint32_t);
+  int data2 = strlen(s);
+  memcpy(stream,  (char*)&data2, sizeof(uint32_t));
+  stream += sizeof(uint32_t);
+  memcpy(stream, s, strlen(s));
+
+//  printf("Data: %s\n\n", redeemVal<uint32_t, char*>(redeemVal<uint32_t, char*>((char*) m2)));
 //  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>((char*) m1)));
 }
 
