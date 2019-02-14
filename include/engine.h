@@ -6,7 +6,7 @@
 #include <tuple>
 #include <string>
 #include <string.h>
-
+#include <utility>
 
 class Engine
 {
@@ -20,39 +20,72 @@ private:
 
 using pe_str_len_t = uint32_t;
 
-template <typename Header>
+static char* constructStr(char* b, char* e)
+{
+  char *p = b;
+  long len = e - b;
+  auto val = (char*) malloc(len + 1);
+  for(long c = 0; c < len; ++ c, ++ p) {
+        val[c] = *p;
+     }
+  val[len] = '\0';
+  return val;
+}
+
+template <typename _HeaderT>
 char* scopeBegin(char *stream)
 {
-  return stream + sizeof(Header);
+  return stream + sizeof(_HeaderT);
 }
 
-template <typename Header>
+template <typename _HeaderT>
 char* scopeEnd(char *stream)
 {
-  Header offset = ((SizedMask<Header>*) stream)->header;
-  return stream + sizeof(offset);
+  return stream + sizeof(_HeaderT) + sizeof(((SizedMask<_HeaderT>*) stream)->header);
 }
 
-template <typename T>
-T redeemVal(char *b)
+template <typename _HeaderT>
+_HeaderT scopeLen(char *stream)
 {
-  T r = ((SizedMask<T>*) b)->header;
-  b += sizeof(T);
+  return ((SizedMask<_HeaderT>*) stream)->header;
+}
+
+template <typename _HeaderT>
+std::pair<char*, char*> getScope(char *stream)
+{
+  return std::make_pair(scopeBegin<_HeaderT>(stream), scopeEnd<_HeaderT>(stream));
+}
+
+template <typename _ValT>
+_ValT redeemVal(char *b)
+{
+  _ValT r = ((SizedMask<_ValT>*) b)->header;
+  b += sizeof(_ValT);
   return r;
 }
 
-template <typename Header, typename T>
-T redeemVal(char* stream)
+template <typename _HeaderT, typename _ValT>
+_ValT redeemVal(std::pair<char*, char*> scope)
 {
-//  char *b = scopeBegin<T>(stream);
-//  char *e = scopeEnd<T>(stream);
-//  long scopeLen = e - b;
-  long scopeLen = ((SizedMask<Header>*) stream)->header;
+  _HeaderT len = scopeLen<_HeaderT>(scope.first);
+  char *p = scope.first + sizeof(_HeaderT);
+  auto val = (char*) malloc(len + 1);
+  for(_HeaderT c = 0; c < len; ++ c, ++ p) {
+        val[c] = *p;
+     }
+  val[len] = '\0';
+  return (_ValT)val;
+}
+
+template <typename _HeaderT, typename _ValT>
+_ValT redeemVal(char* stream)
+{
+  _HeaderT scopeLen = ((SizedMask<_HeaderT>*) stream)->header;
   auto val = (char*) malloc(scopeLen + 1);
-  strcpy(val, ((SizedMask<Header>*) stream)->data);
+  strcpy(val, ((SizedMask<_HeaderT>*) stream)->data);
   val[scopeLen] = '\0';
-  stream += sizeof(Header) + scopeLen;
-  return val;
+  stream += sizeof(_HeaderT) + scopeLen;
+  return (_ValT)val;
 }
 
 
