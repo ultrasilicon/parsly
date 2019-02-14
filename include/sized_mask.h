@@ -6,15 +6,15 @@
 #pragma pack(1)
 
 
-template <typename T>
-struct SizedMask {
-  T header;
-  char data[1];
-};
+//template <typename T>
+//struct SizedMask {
+//  T header;
+//  char data[1];
+//};
 
 template <typename T>
-struct SizedScope {
-  SizedScope(char* dat)
+struct SizedMask {
+  SizedMask(char* dat)
     : data(dat)
   {
     header = strlen(dat);

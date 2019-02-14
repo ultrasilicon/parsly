@@ -41,48 +41,19 @@ T redeemVal(char *b)
   return r;
 }
 
-//template <typename T>
-//T redeemVal(char *b, char *e)
-//{
-//  long scopeLen = e - b;
-//  auto data = (char*) malloc(scopeLen + 1);
-//  memcpy(data, b, scopeLen);
-//  data[scopeLen] = '\0';
-//  return (T) data;
-//}
-
 template <typename Header, typename T>
 T redeemVal(char* stream)
 {
 //  char *b = scopeBegin<T>(stream);
 //  char *e = scopeEnd<T>(stream);
 //  long scopeLen = e - b;
-  long scopeLen = ((SizedScope<Header>*) stream)->header;
-//  SizedMask<Header>* test = ((SizedMask<Header>*) stream);
-
+  long scopeLen = ((SizedMask<Header>*) stream)->header;
   auto val = (char*) malloc(scopeLen + 1);
-  strcpy(val, ((SizedScope<Header>*) stream)->data);
+  strcpy(val, ((SizedMask<Header>*) stream)->data);
   val[scopeLen] = '\0';
   stream += sizeof(Header) + scopeLen;
   return val;
 }
-
-//template<class T>
-//std::string dynamicAlloc(T& t)
-//{
-//}
-
-//template<>
-//std::string dynamicAlloc(int8_t& t)
-//{
-//  return "Int8";
-//}
-
-//template<>
-//std::string dynamicAlloc(uint8_t& t)
-//{
-//  return "UnsignedInt8";
-//}
 
 
 #endif // PARSELYENGINE_H
