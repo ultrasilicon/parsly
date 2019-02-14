@@ -1,0 +1,83 @@
+#ifndef PARSELYENGINE_H
+#define PARSELYENGINE_H
+
+#include "sized_mask.h"
+
+#include <tuple>
+#include <string>
+
+
+class Engine
+{
+public:
+  Engine();
+
+  bool decodeScoped(char* stream, const uint32_t &size);
+
+private:
+};
+
+using pe_str_len_t = uint32_t;
+
+template <typename Header>
+char* scopeBegin(char *stream)
+{
+  return stream + sizeof(Header);
+}
+
+template <typename Header>
+char* scopeEnd(char *stream)
+{
+  Header offset = ((SizedMask<Header>*) stream)->header;
+  return stream + sizeof(offset);
+}
+
+template <typename T>
+T redeemVal(char *b)
+{
+  T r = ((SizedMask<T>*) b)->header;
+  b += sizeof(T);
+  return r;
+}
+
+template <typename Header, typename T>
+T redeemVal(char* stream)
+{
+  char *b = scopeBegin<T>(stream);
+  char *e = scopeEnd<T>(stream);
+  long scopeLen = e - b;
+  auto val = (char*) malloc(scopeLen + 1);
+  memcpy(val, b, scopeLen);
+  val[scopeLen] = '\0';
+  stream = e;
+  return val;
+}
+
+//struct to hold the value:
+template<typename T> struct bits_t { T t; }; //no constructor necessary
+//functions to infer type, construct bits_t with a member initialization list
+//use a reference to avoid copying. The non-const version lets us extract too
+template<typename T> bits_t<T&> bits(T &t) { return bits_t<T&>{t}; }
+template<typename T> bits_t<const T&> bits(const T& t) { return bits_t<const T&>{t}; }
+//insertion operator to call ::write() on whatever type of stream
+template<typename S, typename T>
+S& operator<<(S &s, bits_t<T> b) {
+    return s.write((char*)&b.t, sizeof(T));
+}
+//extraction operator to call ::read(), require a non-const reference here
+template<typename S, typename T>
+S& operator>>(S& s, bits_t<T&> b) {
+    return s.read((char*)&b.t, sizeof(T));
+}
+
+//writing
+std::ofstream f = /*open a file*/;
+int a = 5, b = -1, c = 123456;
+f << bits(a) << bits(b) << bits(c);
+
+//reading
+std::ifstream f2 = /*open a file*/;
+int a, b, c;
+f >> bits(a) >> bits(b) >> bits(c);
+
+#endif // PARSELYENGINE_H
