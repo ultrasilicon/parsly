@@ -58,15 +58,17 @@ template <typename _ValT>
 _ValT redeemVal(char *b)
 {
   _ValT r = ((SizedMask<_ValT>*) b)->header;
-//  b += sizeof(_ValT);
+  b += sizeof(_ValT);
   return r;
 }
 
 template <typename _HeaderT, typename _ValT>
-/*constexpr*/ _ValT redeemVal(char* stream)
+_ValT redeemVal(char* stream)
 {
-  return (_ValT)constructStr(stream + sizeof(_HeaderT),
-                             scopeLen<_HeaderT>(stream));
+  _ValT r = (_ValT)constructStr(stream + sizeof(_HeaderT),
+                                 scopeLen<_HeaderT>(stream));
+  stream += sizeof (_HeaderT) + scopeLen<_HeaderT>(stream);
+  return r;
 }
 
 #endif // PARSELYENGINE_H
