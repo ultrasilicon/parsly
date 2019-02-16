@@ -40,6 +40,8 @@ Packet* ParseEngine::decode(char* stream, const uint32_t &size) //<< WARN return
   switch (msgType) {
     case 0: // HeartBeat
       {
+      //      __TYPE __FIELD_NAME(redeemVal<__TYPE_ARGS>(mobilePtr));
+
         std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
         std::string usrName(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
         std::string publicKey(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
