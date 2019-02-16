@@ -7,13 +7,13 @@ ParseEngine::ParseEngine(NetStack *ns)
 
 }
 
-bool ParseEngine::decodeScoped(char* stream, const uint32_t &size)
+Packet* ParseEngine::decode(char* stream, const uint32_t &size) //<< WARN return value is nulled
 {
   std::printf("ParselyEngine: New Data Section !!");
   if(size == 0 || size < (int) sizeof (uint32_t))
     {
       std::printf("ParselyEngine: Returning - Header Not Complete / Empty Packet");
-      return false;
+      return nullptr;
     }
 
   uint32_t contentSize = ((SizedMask <uint32_t>*) stream)->header;
@@ -21,7 +21,7 @@ bool ParseEngine::decodeScoped(char* stream, const uint32_t &size)
   if(size < contentSize - sizeof(uint32_t))
     {
       std::printf("ParselyEngine: Returning - Packet Imcomplete");
-      return false;
+      return nullptr;
     }
 
 
@@ -69,12 +69,12 @@ bool ParseEngine::decodeScoped(char* stream, const uint32_t &size)
         break;
       }
     }
+  return nullptr;
+}
 
+void ParseEngine::message(Packet *p)
+{
 
-
-
-
-  return true;
 }
 
 void ParseEngine::encode(nlohmann::json *packet)
@@ -82,7 +82,3 @@ void ParseEngine::encode(nlohmann::json *packet)
 
 }
 
-void ParseEngine::decode(char *stream)
-{
-
-}

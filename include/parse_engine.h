@@ -2,6 +2,7 @@
 #define PARSELYENGINE_H
 
 #include "net_stack.h"
+#include "packet.h"
 
 #include "sized_mask.h"
 #include "json.hpp"
@@ -14,14 +15,14 @@
 class ParseEngine
 {
 public:
-  ParseEngine();
+  ParseEngine(NetStack* ns);
 
-  bool decodeScoped(char* stream, const uint32_t &size);
-
-  void encode(nlohmann::json* packet);
-  void decode(char* stream);
+  void message(Packet* p);
+  void (*onMessage)(Packet* p);
 
 private:
+  void encode(nlohmann::json* packet);             //! Weipu
+  Packet* decode(char* stream, const uint32_t &size); //! Tim
 
 
 };
