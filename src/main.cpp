@@ -105,6 +105,52 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
   EXPECT_EQ(string("world"), string(redeemVal<uint32_t, char*>(p)));
 }
 
+TEST(TestRedeemVal, OverRead)
+{
+  //! [19:[6:hello?][5:world]]
+  char* s1 = "hello?";
+  char* s2 = "world";
+  char* stream = (char*) malloc(sizeof(uint32_t) // main header
+                                + sizeof(uint32_t) + strlen(s1) // cell1 total
+                                + sizeof(uint32_t) + strlen(s2) // cell2 total
+                                );
+  char* pos = stream;
+
+  uint32_t header;
+
+  header = // main header
+      sizeof(uint32_t) + strlen(s1) // cell1 total
+      + sizeof(uint32_t) + strlen(s2) // cell2 total
+      ;
+  memcpy(pos, (char*)&header, sizeof(uint32_t));
+  pos += sizeof(header);
+
+  // cell1 header
+  header = strlen(s1);
+  memcpy(pos, (char*)&header, sizeof(uint32_t));
+  pos += sizeof(header);
+
+  // cell1 data
+  strcpy(pos, s1);
+  pos += strlen(s1);
+
+  // cell2 header
+  header = strlen(s2);
+  memcpy(pos, (char*)&header, sizeof(uint32_t));
+  pos += sizeof(header);
+
+  // cell1 data
+  strcpy(pos, s2);
+  pos += strlen(s2);
+
+
+  auto p = scopeBegin<uint32_t>(stream);
+  while(p != scopeEnd<uint32_t>(stream))
+    {
+      redeemVal<uint32_t, char*>(p);
+    }
+}
+
 
 
 TEST(TestPlayground, Playground)
