@@ -22,6 +22,9 @@ Packet* ParseEngine::decode(char* stream, const uint32_t &size) //<< WARN return
       return nullptr;
     }
 
+  char* mobilePtr = stream + sizeof(uint32_t);
+  char* end = scopeEnd<uint32_t>(stream);
+
   uint32_t contentSize = ((SizedMask <uint32_t>*) stream)->header;
 
   if(size < contentSize - sizeof(uint32_t))
@@ -32,41 +35,38 @@ Packet* ParseEngine::decode(char* stream, const uint32_t &size) //<< WARN return
 
 
   //! Header detected & Packet complete
-
-  char* mobilePtr = stream + sizeof(uint32_t);
-
-  auto msgType = redeemVal<uint8_t>(mobilePtr);
+  auto msgType = redeemVal<uint8_t>(mobilePtr, end);
 
   switch (msgType) {
     case 0: // HeartBeat
       {
-        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        std::string usrName(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        std::string publicKey(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        uint32_t timestamp(redeemVal<uint32_t>(mobilePtr));
+        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        std::string usrName(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        std::string publicKey(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        uint32_t timestamp(redeemVal<uint32_t>(mobilePtr, end));
 
         break;
       }
     case 1: // ConnectionInfo
       {
-        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        std::string peers(redeemVal<pe_str_len_t, char*>(mobilePtr));
+        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        std::string peers(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
 
         break;
       }
     case 2: // TextMessage
       {
-        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        std::string msgId(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        std::string msg(redeemVal<pe_str_len_t, char*>(mobilePtr));
+        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        std::string msgId(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        std::string msg(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
 
         break;
       }
     case 3: // ImageMessage
       {
-        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        std::string msgId(redeemVal<pe_str_len_t, char*>(mobilePtr));
-        char* msg(redeemVal<pe_str_len_t, char*>(mobilePtr));
+        std::string uuid(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        std::string msgId(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
+        char* msg(redeemVal<pe_str_len_t, char*>(mobilePtr, end));
 
         break;
       }

@@ -65,17 +65,19 @@ constexpr std::pair<char*, char*> getScope(char *stream)
 }
 
 template <typename _ValT>
-_ValT redeemVal(char* &stream)
+_ValT redeemVal(char* &stream, char* end)
 {
+  if(stream == end)
+    return _ValT();
   _ValT r = ((SizedMask<_ValT>*) stream)->header;
   stream += sizeof(_ValT);
   return r;
 }
 
 template <typename _HeaderT, typename _ValT>
-_ValT redeemVal(char* &stream)
+_ValT redeemVal(char* &stream, char* end)
 {
-  if(!stream)
+  if(stream == end)
     return "";
   _ValT r = (_ValT)constructStr(stream + sizeof(_HeaderT),
                                  scopeLen<_HeaderT>(stream));

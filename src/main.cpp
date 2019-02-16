@@ -8,6 +8,8 @@
 
 #include "parse_engine.h"
 
+#include <vector>
+
 using namespace std;
 using namespace nlohmann;
 
@@ -16,7 +18,6 @@ TEST(TestConstructStr, Cons1)
     char* s = "hello?";
     EXPECT_EQ("ell", string(constructStr(s + 1, 3)));
 }
-
 
 TEST(TestRedeemVal, SingleLayerPacket)
 {
@@ -32,7 +33,27 @@ TEST(TestRedeemVal, SingleLayerPacket)
   strcpy(pos, s);
   pos += strlen(s);
 
-  EXPECT_EQ("hello?", string(redeemVal<uint32_t, char*>(stream)));
+  auto end = scopeEnd<uint32_t>(stream);
+  EXPECT_EQ("hello?", string(redeemVal<uint32_t, char*>(stream, end)));
+}
+
+TEST(TestRedeemVal, OverRedeemVariable)
+{
+  //! [6:hello?]
+  int s = 65535;
+  char* stream = (char*) malloc( sizeof(uint32_t) + sizeof(s) );
+  char* pos = stream;
+
+  auto header = sizeof(s);
+  memcpy(pos, (char*)&header, sizeof(uint32_t));
+  pos += sizeof(uint32_t);
+
+  memcpy(pos, (char*)&s, sizeof(s));
+  pos += sizeof(s);
+
+  auto begin = scopeBegin<uint32_t>(stream);
+  auto end = scopeEnd<uint32_t>(stream);
+  EXPECT_EQ(65535, redeemVal<int>(begin, end));
 }
 
 TEST(TestRedeemVal, MultiLayerPacket)
@@ -58,7 +79,8 @@ TEST(TestRedeemVal, MultiLayerPacket)
   pos += strlen(s);
 
   auto begin = scopeBegin<uint32_t>(stream);
-  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(begin)));
+  auto end = scopeEnd<uint32_t>(stream);
+  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(begin, end)));
 }
 
 TEST(TestRedeemVal, MultiLayerMultiCellPacket)
@@ -101,11 +123,12 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
 
 
   auto p = scopeBegin<uint32_t>(stream);
-  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(p)));
-  EXPECT_EQ(string("world"), string(redeemVal<uint32_t, char*>(p)));
+  auto end = scopeEnd<uint32_t>(stream);
+  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(p, end)));
+  EXPECT_EQ(string("world"), string(redeemVal<uint32_t, char*>(p, end)));
 }
 
-TEST(TestRedeemVal, OverRead)
+TEST(TestRedeemVal, MultiLayerOverRedeemString)
 {
   //! [19:[6:hello?][5:world]]
   char* s1 = "hello?";
@@ -145,13 +168,11 @@ TEST(TestRedeemVal, OverRead)
 
 
   auto p = scopeBegin<uint32_t>(stream);
-  while(p != scopeEnd<uint32_t>(stream))
-    {
-      redeemVal<uint32_t, char*>(p);
-    }
+  auto end = scopeEnd<uint32_t>(stream);
+  for(std::string s : {"hello?", "world", "", "", ""})
+    EXPECT_EQ(s, string(redeemVal<uint32_t, char*>(p, end)));
+
 }
-
-
 
 TEST(TestPlayground, Playground)
 {

@@ -6,6 +6,7 @@
 
 class Packet;
 
+
 using variant_t = std::variant<
     int8_t
     , int16_t
@@ -16,7 +17,6 @@ using variant_t = std::variant<
     , uint32_t
     , uint64_t
     , std::string
-//    , Packet*
 >;
 
 class Packet
