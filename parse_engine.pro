@@ -9,15 +9,17 @@ INCLUDEPATH += ./include
 
 SOURCES += \
     src/main.cpp \
-    src/engine.cpp \
-    packet.cpp
+    packet.cpp \
+    net_stack.cpp \
+    src/parse_engine.cpp
 
 
 HEADERS += \
     include/json.hpp \
-    include/engine.h \
     include/sized_mask.h \
-    packet.h
+    packet.h \
+    net_stack.h \
+    include/parse_engine.h
 
 mac {
     PKG_CONFIG = /usr/local/bin/pkg-config

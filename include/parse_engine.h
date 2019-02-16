@@ -1,21 +1,29 @@
 #ifndef PARSELYENGINE_H
 #define PARSELYENGINE_H
 
+#include "net_stack.h"
+
 #include "sized_mask.h"
+#include "json.hpp"
 
 #include <tuple>
 #include <string>
 #include <string.h>
 #include <utility>
 
-class Engine
+class ParseEngine
 {
 public:
-  Engine();
+  ParseEngine();
 
   bool decodeScoped(char* stream, const uint32_t &size);
 
+  void encode(nlohmann::json* packet);
+  void decode(char* stream);
+
 private:
+
+
 };
 
 using pe_str_len_t = uint32_t;

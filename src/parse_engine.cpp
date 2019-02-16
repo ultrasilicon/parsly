@@ -1,14 +1,13 @@
-#include "engine.h"
+#include "parse_engine.h"
 
 
 
-Engine::Engine()
+ParseEngine::ParseEngine(NetStack *ns)
 {
 
 }
 
-
-bool Engine::decodeScoped(char* stream, const uint32_t &size)
+bool ParseEngine::decodeScoped(char* stream, const uint32_t &size)
 {
   std::printf("ParselyEngine: New Data Section !!");
   if(size == 0 || size < (int) sizeof (uint32_t))
@@ -76,4 +75,14 @@ bool Engine::decodeScoped(char* stream, const uint32_t &size)
 
 
   return true;
+}
+
+void ParseEngine::encode(nlohmann::json *packet)
+{
+
+}
+
+void ParseEngine::decode(char *stream)
+{
+
 }
