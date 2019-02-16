@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
+#include <string>
 
 class Packet;
 
@@ -37,7 +39,9 @@ struct variant
     tag_of_type<_Ts...> m_tagger;
     int m_curr_tag;
 
-    variant() : m_p(new char[max_type_size<0, _Ts...>::value]) { }
+    template<typename _T>
+    variant(const _T& v) : m_p(new char[max_type_size<0, _Ts...>::value]) { *this = v; }
+    variant() : variant(0) {}
     ~variant() { if(m_p) delete[] m_p; m_p = nullptr; }
 
     template<typename _T>
@@ -69,11 +73,9 @@ using variant_t = variant<
     , std::string
 >;
 
-class Packet
+struct Packet
 {
-public:
-    Packet();
-    std::vector<variant_t> data;
+    std::vector<variant_t> data {1,std::string(),1l};
     uint8_t msgType = 0;
 };
 

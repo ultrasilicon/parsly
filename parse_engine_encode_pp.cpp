@@ -9,5 +9,10 @@
 
 char* ParseEngine::encode(Packet *packet)
 {
+    const auto msgType = packet->msgType;
 
+
+
+//    char* stream = (char*) malloc(0
+//                                  );
 }
