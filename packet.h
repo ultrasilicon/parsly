@@ -23,7 +23,7 @@ class Packet
 {
 public:
     Packet();
-    std::unordered_map<std::string, variant_t> data;
+//    std::unordered_map<std::string, variant_t> data;
 };
 
 
