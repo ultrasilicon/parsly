@@ -76,6 +76,7 @@ class Packet
 public:
     Packet();
     std::unordered_map<std::string, variant_t> data;
+    uint8_t msgType = 0;
 };
 
 
