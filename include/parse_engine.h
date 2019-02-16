@@ -1,5 +1,4 @@
-#ifndef PARSELYENGINE_H
-#define PARSELYENGINE_H
+#pragma once
 
 #include "net_stack.h"
 #include "packet.h"
@@ -85,4 +84,3 @@ _ValT redeemVal(char* &stream, char* end)
   return r;
 }
 
-#endif // PARSELYENGINE_H

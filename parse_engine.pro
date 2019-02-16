@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++1z
+CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 QMAKE_CXXFLAGS += "-Wno-old-style-cast"
@@ -11,7 +11,9 @@ SOURCES += \
     src/main.cpp \
     packet.cpp \
     net_stack.cpp \
-    src/parse_engine.cpp
+    src/parse_engine.cpp \
+    parse_engine_encode_pp.cpp \
+    parse_engine_decode_pp.cpp
 
 
 HEADERS += \

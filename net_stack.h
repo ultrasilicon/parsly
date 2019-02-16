@@ -1,5 +1,5 @@
-#ifndef NET_STACK_H
-#define NET_STACK_H
+#pragma once
+
 
 #include "packet.h"
 
@@ -12,4 +12,3 @@ public:
 protected:
 };
 
-#endif // NET_STACK_H

@@ -1,8 +1,6 @@
-#ifndef PACKET_H
-#define PACKET_H
+#pragma once
 
-#include <unordered_map>
-#include <variant>
+#include <vector>
 
 class Packet;
 
@@ -75,10 +73,9 @@ class Packet
 {
 public:
     Packet();
-    std::unordered_map<std::string, variant_t> data;
+    std::vector<variant_t> data;
     uint8_t msgType = 0;
 };
 
 
 
-#endif // PACKET_H

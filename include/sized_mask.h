@@ -1,5 +1,4 @@
-#ifndef SIZEMASK_H
-#define SIZEMASK_H
+#pragma once
 
 #include <string.h>
 
@@ -29,4 +28,3 @@ struct SizedMask {
 
 
 
-#endif // SIZEMASK_H
