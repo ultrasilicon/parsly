@@ -4,3 +4,8 @@ NetStack::NetStack()
 {
 
 }
+
+int NetStack::write(char *)
+{
+  return 0;
+}

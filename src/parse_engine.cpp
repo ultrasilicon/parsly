@@ -3,9 +3,15 @@
 
 
 ParseEngine::ParseEngine(NetStack *ns)
+  : m_net_stack(ns)
+{
+}
+
+char* ParseEngine::encode(Packet *packet)
 {
 
 }
+
 
 Packet* ParseEngine::decode(char* stream, const uint32_t &size) //<< WARN return value is nulled
 {
@@ -74,11 +80,7 @@ Packet* ParseEngine::decode(char* stream, const uint32_t &size) //<< WARN return
 
 void ParseEngine::message(Packet *p)
 {
-
+  m_net_stack->write(encode(p));
 }
 
-void ParseEngine::encode(nlohmann::json *packet)
-{
-
-}
 

@@ -21,9 +21,10 @@ public:
   void (*onMessage)(Packet* p);
 
 private:
-  void encode(nlohmann::json* packet);             //! Weipu
+  char *encode(Packet *packet);             //! Weipu
   Packet* decode(char* stream, const uint32_t &size); //! Tim
 
+  NetStack *m_net_stack;
 
 };
 
