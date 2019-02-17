@@ -13,15 +13,6 @@
 
 template <typename T>
 struct SizedMask {
-  SizedMask()
-  {}
-
-  SizedMask(char* dat)
-    : data(dat)
-  {
-    header = (T)strlen(dat);
-  }
-
   T header;
   char* data;
 };

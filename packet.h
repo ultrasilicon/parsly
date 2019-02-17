@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <type_traits>
 
 template<size_t _MAX, typename _T, typename... _Ts>
 struct max_type_size : max_type_size<(_MAX <= sizeof(_T) ? sizeof(_T) : _MAX), _Ts...>
@@ -30,18 +31,40 @@ struct tag_of_type<_T> : tagger<_T>
 template<typename... _Ts>
 struct variant
 {
-    char* m_p;
     tag_of_type<_Ts...> m_tagger;
+
+    const size_t m_size = max_type_size<0, _Ts...>::value;
     int m_curr_tag = -1;
 
+    char* m_p;
+
     template<typename _T>
-    variant(const _T& v) : m_p(new char[max_type_size<0, _Ts...>::value]) { *this = v; }
+    variant(const _T& v)
+        : m_p(new char[m_size]{})
+    {
+        new(m_p) _T(v);
+        m_curr_tag = static_cast<tagger<_T>&>(m_tagger).value;
+    }
+
     variant() : variant(0) {}
+
+    variant(const variant& that)
+        : m_p(new char[m_size]{})
+    {
+        for(int i = 0; i < m_size; i++)
+            m_p[i] = that.m_p[i];
+        m_curr_tag = that.m_curr_tag;
+    }
+
     ~variant() { if(m_p) delete[] m_p; m_p = nullptr; }
 
     template<typename _T>
     variant& operator=(const _T& v)
     {
+//        if(!std::is_same<_T, std::string>::value
+//                && std::is_base_of<tagger<std::string>, variant>::value
+//                && m_curr_tag == static_cast<tagger<std::string>&>(m_tagger).value) // previous and now both strings?
+//            ((std::string*)m_p)->~std::basic_string<char>();
         *(_T*)m_p = v;
         m_curr_tag = static_cast<tagger<_T>&>(m_tagger).value;
         return *this;

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "json.hpp"
 
 #include "net_stack.h"
@@ -12,6 +13,9 @@
 #include "sized_mask.h"
 
 
+#define __TYPE 100
+#define _DATA_IDX -1
+#define __TYPE_ARGS int
 
 
 class ParseEngine
@@ -98,7 +102,15 @@ std::string redeemStr(char* &stream, char* end)
   return r;
 }
 
+template <typename _ValT>
+void insertVal(std::vector<char>& stream, size_t& pos, const _ValT& v)
+{
+    stream.resize(stream.size() + sizeof(_ValT));
+    memcpy(&((SizedMask<_ValT>*) &stream[pos])->header, &v, sizeof(_ValT));
+    pos += sizeof(_ValT);
+}
 
+void insertStr(std::vector<char>& stream, size_t& pos, const std::string& s);
 
 
 

@@ -85,47 +85,26 @@ TEST(TestRedeemVal, MultiLayerPacket)
 
 TEST(TestRedeemVal, MultiLayerMultiCellPacket)
 {
-  //! [19:[6:hello?][5:world]]
-  char* s1 = "hello?";
-  char* s2 = "world";
-  char* stream = (char*) malloc(sizeof(uint32_t) // main header
-                                + sizeof(uint32_t) + strlen(s1) // cell1 total
-                                + sizeof(uint32_t) + strlen(s2) // cell2 total
-                                );
-  char* pos = stream;
+  //! [20:[6:hello,][6:world!]]
+    std::vector<char> stream(sizeof(uint32_t));
+    size_t pos{};
 
-  uint32_t header;
+    Packet pk {{std::string{"hello,"}, std::string{"world!"}, std::string{"duckhacks"}, uint32_t{2019}}, __TYPE};
 
-  header = // main header
-      sizeof(uint32_t) + strlen(s1) // cell1 total
-      + sizeof(uint32_t) + strlen(s2) // cell2 total
-      ;
-  memcpy(pos, (char*)&header, sizeof(uint32_t));
-  pos += sizeof(header);
+    *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4; // set main header
+    pos += sizeof(uint32_t); // skip main header
 
-  // cell1 header
-  header = strlen(s1);
-  memcpy(pos,  (char*)&header, sizeof(uint32_t));
-  pos += sizeof(header);
+    insertStr(stream, pos, pk.data[0].get<std::string>());
+    insertStr(stream, pos, pk.data[1].get<std::string>());
+    insertStr(stream, pos, pk.data[2].get<std::string>());
+    insertVal(stream, pos, pk.data[3].get<uint32_t>());
 
-  // cell1 data
-  strcpy(pos, s1);
-  pos += strlen(s1);
-
-  // cell2 header
-  header = strlen(s2);
-  memcpy(pos,  (char*)&header, sizeof(uint32_t));
-  pos += sizeof(header);
-
-  // cell1 data
-  strcpy(pos, s2);
-  pos += strlen(s2);
-
-
-  auto p = scopeBegin<uint32_t>(stream);
-  auto end = scopeEnd<uint32_t>(stream);
-  EXPECT_EQ(string("hello?"), string(redeemStr<uint32_t>(p, end)));
-  EXPECT_EQ(string("world"), string(redeemStr<uint32_t>(p, end)));
+    auto p = scopeBegin<uint32_t>(stream.data());
+    auto end = scopeEnd<uint32_t>(stream.data());
+    EXPECT_EQ(string("hello,"), string(redeemStr<uint32_t>(p, end)));
+    EXPECT_EQ(string("world!"), string(redeemStr<uint32_t>(p, end)));
+    EXPECT_EQ(string("duckhacks"), string(redeemStr<uint32_t>(p, end)));
+    EXPECT_EQ(uint32_t{2019}, uint32_t(redeemVal<uint32_t>(p, end)));
 }
 
 TEST(TestRedeemVal, MultiLayerOverRedeemString)
@@ -177,13 +156,16 @@ TEST(TestRedeemVal, MultiLayerOverRedeemString)
 TEST(TestPlayground, Playground)
 {
   //! JSON example
-  json field1Json = json::array({"time", "uuid", "content", "pubkey"});
-  json packetJson = json::array({0, field1Json});
+//  json field1Json = json::array({"time", "uuid", "content", "pubkey"});
+//  json packetJson = json::array({0, field1Json});
 }
 
 
 int main(int argc, char **argv  )
 {
+//        variant_t s = "hello"s;
+//        std::string ss = s.get<std::string>();
+
   ::testing::InitGoogleTest(&argc, argv);
 
   return RUN_ALL_TESTS();
