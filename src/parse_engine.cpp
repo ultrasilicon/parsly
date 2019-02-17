@@ -8,9 +8,9 @@ ParseEngine::ParseEngine(NetStack *ns)
 }
 
 
-void ParseEngine::message(Packet *p)
+void ParseEngine::message(Packet *p, std::string &ip)
 {
-  m_net_stack->write(encode(p));
+  m_net_stack->write(encode(p), ip);
 }
 
 bool ParseEngine::decodable(char *stream, const size_t &size)

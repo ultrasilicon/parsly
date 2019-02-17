@@ -7,6 +7,7 @@
 #include <string.h>
 #include <utility>
 #include <tuple>
+#include <functional>
 
 #include "sized_mask.h"
 
@@ -21,8 +22,9 @@ class ParseEngine
 public:
   ParseEngine(NetStack* ns);
 
-  void message(Packet* p);
-  void (*onMessage)(Packet* p);
+  void message(Packet* p, std::string &ip);
+
+  std::function<void(Packet* p)> onMessage;
 
 private:
   char *encode(Packet *packet);             //! Weipu
