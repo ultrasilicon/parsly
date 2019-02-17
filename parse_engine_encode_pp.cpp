@@ -9,7 +9,7 @@
 
 char* ParseEngine::encode(Packet *packet)
 {
-    std::vector<char> stream(sizeof(uint32_t)); // memory management helper
+    std::vector<char> stream(sizeof(uint32_t)); // vector as memory management helper
     size_t pos = decltype (stream)::size_type{};
 
     const auto msgType = packet->msgType;
@@ -27,10 +27,10 @@ char* ParseEngine::encode(Packet *packet)
       default:{ return nullptr; }
     }
 
-    size_t ss = stream.size() - sizeof(uint32_t);
-    memcpy(&((SizedMask<uint32_t>*) &stream.front())->header, &ss, sizeof(uint32_t));
+    size_t ss = stream.size() - sizeof(uint32_t); // size except main header
+    memcpy(&((SizedMask<uint32_t>*) &stream.front())->header, &ss, sizeof(uint32_t)); // set main header
 
-    auto* enc = new char[stream.size()];
+    auto* enc = new char[stream.size()]; // return buffer
     memcpy(enc, stream.data(), stream.size());
     return enc;
 }
