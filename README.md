@@ -1,5 +1,4 @@
-> GitHub: https://github.com/ultrasilicon/parsely
-
+# Parsely - Describe & deploy net protocol with simply a JSON file.
 ## Inspiration
 
 * Nowadays, although is it very easy to create an App with internet communication module, it is still difficult to achive fast development of *high performance* server and clients. 
