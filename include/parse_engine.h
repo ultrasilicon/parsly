@@ -24,7 +24,7 @@ public:
 
 private:
   char *encode(Packet *packet);             //! Weipu
-  Packet* decode(char* stream, const uint32_t &size); //! Tim
+  Packet* decode(char* stream, const size_t &size); //! Tim
 
   NetStack *m_net_stack;
 
@@ -96,7 +96,6 @@ std::string redeemStr(char* &stream, char* end)
   stream += sizeof(_HeaderT) + scopeLen<_HeaderT>(stream);
   return r;
 }
-
 
 
 
