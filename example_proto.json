@@ -7,27 +7,27 @@
 
 	"fields" : {
 		"HeartBeat" : [
-			{"uuid" : "string"},
-			{"usrName"   : "string"},
-			{"publicKey" : "string"},
-			{"timestamp" : "uint32"}
+			["string", "uuid"],
+			["string", "usrName"],
+			["string", "publicKey"],
+			["uint32", "timestamp"]
 		],
 	
 		"ConnectionInfo" : [
-			{"uuid" : "string"},
-			{"peers" : "string"}
+			["string", "uuid"],
+			["string", "peers"]
 		],
 		
 		"TextMessage" : [
-			{"uuid" : "string"},
-			{"msgId" : "string"},
-			{"msg" : "string"}
+			["string", "uuid"],
+			["string", "msgId"],
+			["string", "msg"]
 		],
 		
 		"ImageMessage" : [
-			{"uuid" : "string"},
-			{"msgId" : "string"},
-			{"msg" : "string"}
+			["string", "uuid"],
+			["string", "msgId"],
+			["string", "msg"]
 		]
 	}
 }
