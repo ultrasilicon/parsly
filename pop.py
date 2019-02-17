@@ -28,8 +28,11 @@ global pop_json
 global pop_main_header_type
 global pop_field_map
 
+global out_encoder_code
+global out_decoder_code
 
-def checkArgs():
+
+def check_args():
 	if(len(sys.argv) != 3):
 		print("fatal: argument count error, 2 needed.\nusage: %s <protocol json file> <output directory>"
 		 % sys.argv[0])
@@ -39,11 +42,11 @@ def checkArgs():
 	arg_json_file = sys.argv[1]
 	arg_output_dir = sys.argv[2]
 
-def readJson(dir):
+def read_json(dir):
 	global pop_json
 	pop_json = json.loads(open(dir).read())
 
-def parseJson():
+def parse_json():
 	global pop_json
 	global pop_main_header_type
 	global pop_field_map
@@ -59,11 +62,17 @@ def parseJson():
 			print("error: message field of flag %s is not defined in \"fields\" object.\n" % flag)
 			exit(1)
 
+def generate_decoder():
+	global out_encoder_code
+	
+
 if __name__=="__main__":
-	checkArgs()
-	readJson(arg_json_file)
+	check_args()
+	parse_json(arg_json_file)
 	print("pop: Parsing %s ...\n" % arg_json_file)
-	parseJson()
-	print("pop: Compiling to %s ...\n" % arg_output_dir)
+	parse_json()
+	print("pop: Generating decoder in C++ ...\n" % arg_output_dir)
+
+	# compileEncode
 
 

@@ -24,8 +24,9 @@ public:
 
 private:
   char *encode(Packet *packet);             //! Weipu
-  Packet* decode(char* stream, const size_t &size); //! Tim
+  Packet* decode(char *stream, const size_t &size); //! Tim
 
+  std::string decode_buffer;
   NetStack *m_net_stack;
 
 };
@@ -43,7 +44,7 @@ static char* constructStr(char* b, size_t len)
 }
 
 template <typename _HeaderT>
-constexpr _HeaderT scopeLen(char *stream)
+constexpr _HeaderT scopeLen(const char *stream)
 {
   return ((SizedMask<_HeaderT>*) stream)->header;
 }

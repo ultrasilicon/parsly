@@ -9,14 +9,13 @@
 
 Packet* ParseEngine::decode(char* stream, const size_t &size)
 {
-  printf("ParselyEngine: New Data Section !!");
   if(size == 0 || size < sizeof(uint32_t))
     {
-      printf("ParselyEngine: Returning - Header Not Complete / Empty Packet");
+      printf("ParselyEngine: Returning - Header Incomplete / Empty Packet");
       return nullptr;
     }
 
-  if(size < ((SizedMask <uint32_t>*) stream)->header - sizeof(uint32_t))
+  if(size < scopeLen<uint32_t>(stream))
     {
       printf("ParselyEngine: Returning - Packet Imcomplete");
       return nullptr;
