@@ -59,16 +59,16 @@ struct variant
     ~variant() { if(m_p) delete[] m_p; m_p = nullptr; }
 
     template<typename _T>
-    variant& operator=(const _T& v)
-    {
-//        if(!std::is_same<_T, std::string>::value
-//                && std::is_base_of<tagger<std::string>, variant>::value
-//                && m_curr_tag == static_cast<tagger<std::string>&>(m_tagger).value) // previous and now both strings?
-//            ((std::string*)m_p)->~std::basic_string<char>();
-        *(_T*)m_p = v;
-        m_curr_tag = static_cast<tagger<_T>&>(m_tagger).value;
-        return *this;
-    }
+    variant& operator=(const _T& v) = delete;
+//    {
+////        if(!std::is_same<_T, std::string>::value
+////                && std::is_base_of<tagger<std::string>, variant>::value
+////                && m_curr_tag == static_cast<tagger<std::string>&>(m_tagger).value) // previous and now both strings?
+////            ((std::string*)m_p)->~std::basic_string<char>();
+//        *(_T*)m_p = v;
+//        m_curr_tag = static_cast<tagger<_T>&>(m_tagger).value;
+//        return *this;
+//    }
 
     template<typename _T>
     _T& get()
