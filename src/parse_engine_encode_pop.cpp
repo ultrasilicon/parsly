@@ -12,7 +12,7 @@ char* ParseEngine::encode(Packet *packet)
     size_t pos = decltype (stream)::size_type{};
     const auto flag = packet->msgType;
 
-    ///[_POP_ENCODER_INJECT_POINT]///
+    ///[BEGIN _POP_ENCODER_INJECT_POINT]///
     ///[END _POP_ENCODER_INJECT_POINT]///
 
     size_t ss = stream.size() - sizeof(uint32_t); // total size excluding main header
