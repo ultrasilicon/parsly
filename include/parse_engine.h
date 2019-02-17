@@ -48,31 +48,31 @@ static char* constructStr(char* b, size_t len)
 }
 
 template <typename _HeaderT>
-constexpr _HeaderT scopeLen(const char *stream)
+_HeaderT scopeLen(const char *stream)
 {
   return ((SizedMask<_HeaderT>*) stream)->header;
 }
 
 template <typename _HeaderT>
-constexpr char* scopeBegin(char *stream)
+char* scopeBegin(char *stream)
 {
   return stream + sizeof(_HeaderT);
 }
 
 template <typename _HeaderT>
-constexpr char* scopeEnd(char *stream)
+const char* scopeEnd(char *stream)
 {
   return scopeBegin<_HeaderT>(stream) + scopeLen<_HeaderT>(stream);
 }
 
 template <typename _HeaderT>
-constexpr std::pair<char*, char*> getScope(char *stream)
+std::pair<char*, char*> getScope(char *stream)
 {
   return std::make_pair(scopeBegin<_HeaderT>(stream), scopeEnd<_HeaderT>(stream));
 }
 
 template <typename _ValT>
-_ValT redeemVal(char* &stream, char* end)
+_ValT redeemVal(char* &stream, const char* end)
 {
   if(stream == end)
     return _ValT();
@@ -82,7 +82,7 @@ _ValT redeemVal(char* &stream, char* end)
 }
 
 //template <typename _HeaderT, typename _ValT>
-//_ValT redeemStr(char* &stream, char* end)
+//_ValT redeemStr(char* &stream, const char* end)
 //{
 //  if(stream == end)
 //    return "";
@@ -93,7 +93,7 @@ _ValT redeemVal(char* &stream, char* end)
 //}
 
 template <typename _HeaderT>
-std::string redeemStr(char* &stream, char* end)
+std::string redeemStr(char* &stream, const char* end)
 {
   if(stream == end)
     return "";
