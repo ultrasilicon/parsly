@@ -82,6 +82,15 @@ def write_to_file(dir, data):
 		exit(1)
 	open("demofile.txt", "a").write(data)
 
+def pop_redeem(type_str):
+	if(type_name == "string"):
+		return "redeemStr<pe_str_len_t>(pos, end),"
+	else:
+		if type_str not in str_to_type:
+			print("error: unknown type %s.\n" % type_str)
+			exit(1)
+		return "redeemVal<" + str_to_type[type_str] + ">(pos, end),"
+
 def pop_wrap(code, prefix, postfix):
 	return prefix + code + postfix
 
