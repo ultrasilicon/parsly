@@ -32,10 +32,10 @@ global pop_flag_field_map
 
 global out_encoder_code
 global out_encoder_label
-out_encoder_label = "POP_ENCODER_INJECT_POINT"
+out_encoder_label = "_POP_ENCODER_INJECT_POINT"
 global out_decoder_code
 global out_decoder_label
-out_decoder_label = "POP_DECODER_INJECT_POINT"
+out_decoder_label = "_POP_DECODER_INJECT_POINT"
 
 
 def check_args():
@@ -98,8 +98,7 @@ def pop_switch(code, enum_name):
 
 
 def generate_decoder():
-	global out_encoder_code
-
+	global out_decoder_code
 	switch_block = ""
 	case_counter = 0
 	for key in pop_flag_field_map:
@@ -111,11 +110,11 @@ def generate_decoder():
 		switch_block += pop_case(case_block, case_counter, key)
 		case_counter += 1
 
+	out_decoder_code = pop_switch(switch_block, "flag")
+	return out_decoder_code
 
-	return pop_switch(switch_block, "flag")
 
-
-def write_to_file(dir, data):
+def inject_to_file(dir, label, data):
 	if not os.path.isdir("dir"):
 		print("fatal: file %s not found.\n" % dir)
 		exit(1)
