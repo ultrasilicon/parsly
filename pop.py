@@ -1,4 +1,5 @@
 import sys
+import os
 import json
 
 str_to_type = {
@@ -10,7 +11,7 @@ str_to_type = {
 	"uint16" : "uint16_t",
 	"uint32" : "uint32_t",
 	"uint64" : "uint64_t",
-	"string" : "std::string",
+	"string" : "std::string"
 }
 
 header_size_to_type = {
@@ -38,26 +39,27 @@ out_decoder_label = "POP_DECODER_INJECT_POINT"
 
 
 def check_args():
-	if(len(sys.argv) != 3):
-		print("fatal: argument count error, 2 needed.\nusage: %s <protocol json file> <output directory>"
-		 % sys.argv[0])
+	if len(sys.argv) != 3:
+		print("fatal: argument count error, 2 needed.\nusage: %s <protocol json file> <output directory>" % sys.argv[0])
 		exit(1)
 	global arg_json_file 
 	global arg_output_dir 
 	arg_json_file = sys.argv[1]
 	arg_output_dir = sys.argv[2]
 
+
 def read_json(dir):
 	global pop_json
 	pop_json = json.loads(open(dir).read())
+
 
 def parse_json():
 	global pop_json
 	global pop_main_header_type
 	global pop_flag_enum_map
+	pop_flag_enum_map = {}
 	global pop_flag_field_map
 	pop_flag_field_map = {}
-
 
 	# "header" : 4
 	pop_main_header_type = pop_json["protocol"]["header"]	
@@ -67,13 +69,50 @@ def parse_json():
 		if flag in pop_json["fields"]:
 			pop_flag_enum_map[flag] = enum_counter
 			pop_flag_field_map[flag] = pop_json["fields"][flag]
-			enum_counter ++
+			enum_counter += 1
 		else:
 			print("error: message field of flag %s is not defined in \"fields\" object.\n" % flag)
 			exit(1)
 
+
+def pop_redeem(type_str, comment):
+	if type_str == "string":
+		return "redeemStr<pe_str_len_t>(pos, end), // " + comment + "\n"
+	else:
+		if type_str not in str_to_type:
+			print("error: unknown type %s.\n" % type_str)
+			exit(1)
+		return "redeemVal<" + str_to_type[type_str] + ">(pos, end), // " + comment + "\n"
+
+
+def pop_wrap(code, prefix, postfix):
+	return prefix + code + postfix
+
+
+def pop_case(code, case_num, comment):
+	return "case " + str(case_num) + ": { // " + comment + "\n" + code + "}\n"
+
+
+def pop_switch(code, enum_name):
+	return "switch (" + enum_name + ") {\n" + code + "}\n"
+
+
 def generate_decoder():
 	global out_encoder_code
+
+	switch_block = ""
+	case_counter = 0
+	for key in pop_flag_field_map:
+		redeem_block = ""
+		for field in pop_flag_field_map[key]:
+			redeem_block += pop_redeem(field[0], field[1])
+		redeem_block += "\n"
+		case_block = pop_wrap(redeem_block, "return new Packet{{\n", "}, flag};\n")
+		switch_block += pop_case(case_block, case_counter, key)
+		case_counter += 1
+
+
+	return pop_switch(switch_block, "flag")
 
 
 def write_to_file(dir, data):
@@ -82,23 +121,8 @@ def write_to_file(dir, data):
 		exit(1)
 	open("demofile.txt", "a").write(data)
 
-def pop_redeem(type_str):
-	if(type_name == "string"):
-		return "redeemStr<pe_str_len_t>(pos, end),"
-	else:
-		if type_str not in str_to_type:
-			print("error: unknown type %s.\n" % type_str)
-			exit(1)
-		return "redeemVal<" + str_to_type[type_str] + ">(pos, end),"
 
-def pop_wrap(code, prefix, postfix):
-	return prefix + code + postfix
 
-def pop_case(code, case_num, comment):
-	return "case " + str(case_num) + ": { \\\\ " + comment + "\n" + code + "}\n"
-
-def pop_switch(code, enum_name):
-	return "switch (" + enum_name + ") {\n" + code + "}\n"
 
 if __name__=="__main__":
 	check_args()
@@ -106,6 +130,7 @@ if __name__=="__main__":
 	print("pop: Parsing %s ...\n" % arg_json_file)
 	parse_json()
 	print("pop: Generating decoder in C++ ...\n")
+	print (generate_decoder())
 
 	# compileEncode
 
