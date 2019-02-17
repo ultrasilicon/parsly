@@ -4,23 +4,18 @@
 #include <cstdint>
 #include <string>
 
-class Packet;
-
 template<size_t _MAX, typename _T, typename... _Ts>
 struct max_type_size : max_type_size<(_MAX <= sizeof(_T) ? sizeof(_T) : _MAX), _Ts...>
 {
 };
-
 template<size_t _MAX, typename _T>
 struct max_type_size<_MAX, _T>
 {
     static constexpr size_t value = _MAX <= sizeof(_T) ? sizeof(_T) : _MAX;
 };
 
-
 template<typename _T>
 struct tagger { int value; tagger(size_t s) : value(s) {} };
-
 template<typename _T, typename... _Ts>
 struct tag_of_type: tagger<_T>, tag_of_type<_Ts...>
 {
@@ -37,7 +32,7 @@ struct variant
 {
     char* m_p;
     tag_of_type<_Ts...> m_tagger;
-    int m_curr_tag;
+    int m_curr_tag = -1;
 
     template<typename _T>
     variant(const _T& v) : m_p(new char[max_type_size<0, _Ts...>::value]) { *this = v; }
@@ -75,8 +70,8 @@ using variant_t = variant<
 
 struct Packet
 {
-    std::vector<variant_t> data {1,std::string(),1l};
-    uint8_t msgType = 0;
+    std::vector<variant_t> data;
+    uint8_t msgType;
 };
 
 

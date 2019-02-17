@@ -11,8 +11,8 @@ char* ParseEngine::encode(Packet *packet)
 {
     const auto msgType = packet->msgType;
 
-
-
+//    sizeof()
 //    char* stream = (char*) malloc(0
 //                                  );
+
 }
