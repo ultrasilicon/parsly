@@ -23,27 +23,36 @@ Packet* ParseEngine::decode(char* stream, const size_t &size)
 
   auto pos = scopeBegin<uint32_t>(stream);
   auto end = scopeEnd<uint32_t>(stream);
-  auto msgType = redeemVal<uint8_t>(pos, end);
-  switch (msgType) {
-    case 0:{ return new Packet{{ // HeartBeat
+  auto flag = redeemVal<uint8_t>(pos, end);
+  switch (flag) {
+    case 0:{ // HeartBeat
+        return new Packet{{
               redeemStr<pe_str_len_t>(pos, end),
               redeemStr<pe_str_len_t>(pos, end),
               redeemStr<pe_str_len_t>(pos, end),
               redeemVal<uint32_t>(pos, end),
-            }, msgType}; }
-    case 1:{ return new Packet{{
+            }, flag};
+      }
+    case 1:{ // ConnectionInfo
+        return new Packet{{
               redeemStr<pe_str_len_t>(pos, end),
               redeemStr<pe_str_len_t>(pos, end),
-            }, msgType}; }
-    case 2:{ return new Packet{{ // TextMessage
+            }, flag};
+      }
+    case 2:{ // TextMessage
+        return new Packet{{
               redeemStr<pe_str_len_t>(pos, end),
               redeemStr<pe_str_len_t>(pos, end),
               redeemStr<pe_str_len_t>(pos, end),
-            }, msgType}; }
-    case 3:{ return new Packet{{ // ImageMessage
+            }, flag};
+      }
+    case 3:{ // ImageMessage
+        return new Packet{{
               redeemStr<pe_str_len_t>(pos, end),
               redeemStr<pe_str_len_t>(pos, end),
               redeemStr<pe_str_len_t>(pos, end),
-            }, msgType}; }
-    default:{ return nullptr; } }
+            }, flag};
+      }
+    default:{ return nullptr; }
+  }
 }
