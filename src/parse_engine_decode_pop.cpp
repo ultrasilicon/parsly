@@ -5,9 +5,6 @@
 
 #include "sized_mask.h"
 
-#define _POP_DECODER_INJECT_POINT
-
-
 Packet* ParseEngine::decode(char* stream, const size_t &size)
 {
   if(!decodable(stream, size))
@@ -17,7 +14,8 @@ Packet* ParseEngine::decode(char* stream, const size_t &size)
   auto end = scopeEnd<uint32_t>(stream);
   auto flag = redeemVal<uint8_t>(pos, end);
 
-  _POP_DECODER_INJECT_POINT
+  ///[BEGIN _POP_DECODER_INJECT_POINT]////
+  ///[END _POP_DECODER_INJECT_POINT]////
 
   decodeCleanup(pos, stream, size);
   return nullptr;

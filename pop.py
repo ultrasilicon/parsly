@@ -77,12 +77,24 @@ def parse_json():
 
 def pop_redeem(type_str, comment):
 	if type_str == "string":
-		return "redeemStr<pe_str_len_t>(pos, end), // " + comment + "\n"
+		return "\t\t\tredeemStr<pe_str_len_t>(pos, end), // " + comment + "\n"
 	else:
 		if type_str not in str_to_type:
 			print("error: unknown type %s.\n" % type_str)
 			exit(1)
-		return "redeemVal<" + str_to_type[type_str] + ">(pos, end), // " + comment + "\n"
+		return "\t\t\tredeemVal<" + str_to_type[type_str] + ">(pos, end), // " + comment + "\n"
+
+
+def pop_insert(type_str, comment, idx):
+	''' e.g. insertStr(stream, pos, packet->data[2].get<std::string>()); '''
+
+	if type_str == "string":
+		return "\t\t\tinsertStr(stream, pos, packet->data[{}].get<std::string>()); // ".format(idx) + comment + "\n"
+	else:
+		if type_str not in str_to_type:
+			print("error: unknown type %s.\n" % type_str)
+			exit(1)
+		return "\t\t\tinsertVal(stream, pos, packet->data[{}].get<".format(idx) + str_to_type[type_str] + ">()); // " + comment + "\n"
 
 
 def pop_wrap(code, prefix, postfix):
@@ -90,11 +102,11 @@ def pop_wrap(code, prefix, postfix):
 
 
 def pop_case(code, case_num, comment):
-	return "case " + str(case_num) + ": { // " + comment + "\n" + code + "}\n"
+	return "\tcase " + str(case_num) + ": { // " + comment + "\n" + code + "\t}\n"
 
 
 def pop_switch(code, enum_name):
-	return "switch (" + enum_name + ") {\n" + code + "}\n"
+	return "\tswitch (" + enum_name + ") {\n" + code + "\t}\n"
 
 
 def generate_decoder():
@@ -105,8 +117,8 @@ def generate_decoder():
 		redeem_block = ""
 		for field in pop_flag_field_map[key]:
 			redeem_block += pop_redeem(field[0], field[1])
-		redeem_block += "\n"
-		case_block = pop_wrap(redeem_block, "return new Packet{{\n", "}, flag};\n")
+		# redeem_block += "\n"
+		case_block = pop_wrap(redeem_block, "\t\treturn new Packet{{\n", "\t\t}, flag};\n")
 		switch_block += pop_case(case_block, case_counter, key)
 		case_counter += 1
 
@@ -114,13 +126,48 @@ def generate_decoder():
 	return out_decoder_code
 
 
+def generate_encoder():
+	global out_encoder_code
+	switch_block = ""
+	case_counter = 0
+	for key in pop_flag_field_map:
+		insert_block = ""
+		for idx, field in enumerate(pop_flag_field_map[key]):
+			insert_block += pop_insert(field[0], field[1], idx)
+		# insert_block += "\n"
+		switch_block += pop_case(insert_block, case_counter, key)
+		case_counter += 1
+
+	out_encoder_code = pop_switch(switch_block, "flag")
+	return out_encoder_code
+
+
 def inject_to_file(dir, label, data):
-	if not os.path.isdir("dir"):
+	if not os.path.isfile(dir):
 		print("fatal: file %s not found.\n" % dir)
 		exit(1)
-	open("demofile.txt", "a").write(data)
 
+	lines = []
+	with open(dir, "r") as dec_cpp:
+		lines = dec_cpp.readlines()
 
+	with open(dir, "w") as dec_cpp:
+		for i, line in enumerate(lines):
+			if line.find(label) > -1:
+				until = i
+				for j in range(i + 1, len(lines)):
+					if lines[j].find(label) == -1:
+						until = j
+					else:
+						break
+				n = until - i
+				while n > 0:
+					lines.pop(i + 1)
+					n -= 1
+
+				lines.insert(i + 1, data) # inject
+				dec_cpp.writelines(lines)
+				break
 
 
 if __name__=="__main__":
@@ -130,7 +177,8 @@ if __name__=="__main__":
 	parse_json()
 	print("pop: Generating decoder in C++ ...\n")
 	print (generate_decoder())
-
-	# compileEncode
-
+	print("pop: Generating encoder in C++ ...\n")
+	print(generate_encoder())
+	inject_to_file(arg_output_dir + "/parse_engine_decode_pop.cpp", out_decoder_label, out_decoder_code)
+	inject_to_file(arg_output_dir + "/parse_engine_encode_pop.cpp", out_encoder_label, out_encoder_code)
 
