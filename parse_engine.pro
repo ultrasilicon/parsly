@@ -9,18 +9,18 @@ INCLUDEPATH += ./include
 
 SOURCES += \
     src/main.cpp \
-    packet.cpp \
-    net_stack.cpp \
+    src/packet.cpp \
+    src/net_stack.cpp \
     src/parse_engine.cpp \
-    parse_engine_encode_pp.cpp \
-    parse_engine_decode_pp.cpp
+    src/parse_engine_decode_pop.cpp \
+    src/parse_engine_encode_pop.cpp
 
 
 HEADERS += \
     include/json.hpp \
     include/sized_mask.h \
-    packet.h \
-    net_stack.h \
+    include/packet.h \
+    include/net_stack.h \
     include/parse_engine.h
 
 mac {
