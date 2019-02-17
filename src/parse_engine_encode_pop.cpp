@@ -4,7 +4,6 @@
 #include "packet.h"
 
 #include "sized_mask.h"
-#include "json.hpp"
 
 
 char* ParseEngine::encode(Packet *packet)

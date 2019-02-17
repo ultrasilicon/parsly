@@ -17,7 +17,6 @@ SOURCES += \
 
 
 HEADERS += \
-    include/json.hpp \
     include/sized_mask.h \
     include/packet.h \
     include/net_stack.h \

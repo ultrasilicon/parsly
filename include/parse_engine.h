@@ -1,7 +1,5 @@
 #pragma once
 
-#include "json.hpp"
-
 #include "net_stack.h"
 #include "packet.h"
 
@@ -29,6 +27,9 @@ public:
 private:
   char *encode(Packet *packet);             //! Weipu
   Packet* decode(char *stream, const size_t &size); //! Tim
+
+  bool decodable(char *stream, const size_t &size);
+  bool decodeCleanup(char* pos, char *stream, const size_t &size);
 
   std::string decode_buffer;
   NetStack *m_net_stack;

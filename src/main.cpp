@@ -3,7 +3,6 @@
 
 #include "gtest/gtest.h"
 
-#include "json.hpp"
 #include "string.h"
 
 #include "parse_engine.h"
@@ -11,7 +10,6 @@
 #include <vector>
 
 using namespace std;
-using namespace nlohmann;
 
 TEST(TestConstructStr, Cons1)
 {
