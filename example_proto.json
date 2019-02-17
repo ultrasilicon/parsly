@@ -1,32 +1,33 @@
 {
 	"version" : [0, 0, 0],
 	"protocol" : {
-		"header" : "uint32",
-		"flags" : ["HeartBeat", "ConnectionInfo", "TextMessage", "ImageMessage"],
+		"header" : 4,
+		"flags" : ["HeartBeat", "ConnectionInfo", "TextMessage", "ImageMessage"]
 	},
 
-	"HeartBeat" : [
-		{"uuid" : "string"},
-		{"usrName"   : "string"},
-		{"publicKey" : "string"},
-		{"timestamp" : "uint32"}
-	],
-
-	"ConnectionInfo" : [
-		{"uuid" : "string"},
-		{"peers" : "string"}
-	],
+	"fields" : {
+		"HeartBeat" : [
+			{"uuid" : "string"},
+			{"usrName"   : "string"},
+			{"publicKey" : "string"},
+			{"timestamp" : "uint32"}
+		],
 	
-	"TextMessage" : [
-		{"uuid" : "string"},
-		{"msgId" : "string"}
-		{"msg" : "string"}
-	],
-	
-	"ImageMessage" : [
-		{"uuid" : "string"},
-		{"msgId" : "string"}
-		{"msg" : "string"}
-	],
-
+		"ConnectionInfo" : [
+			{"uuid" : "string"},
+			{"peers" : "string"}
+		],
+		
+		"TextMessage" : [
+			{"uuid" : "string"},
+			{"msgId" : "string"},
+			{"msg" : "string"}
+		],
+		
+		"ImageMessage" : [
+			{"uuid" : "string"},
+			{"msgId" : "string"},
+			{"msg" : "string"}
+		]
+	}
 }
