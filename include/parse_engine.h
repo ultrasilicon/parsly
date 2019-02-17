@@ -1,15 +1,18 @@
 #pragma once
+#include "json.hpp"
 
 #include "net_stack.h"
 #include "packet.h"
 
-#include "sized_mask.h"
-#include "json.hpp"
-
-#include <tuple>
 #include <string>
 #include <string.h>
 #include <utility>
+#include <tuple>
+
+#include "sized_mask.h"
+
+
+
 
 class ParseEngine
 {
@@ -73,14 +76,38 @@ _ValT redeemVal(char* &stream, char* end)
   return r;
 }
 
-template <typename _HeaderT, typename _ValT>
-_ValT redeemVal(char* &stream, char* end)
+//template <typename _HeaderT, typename _ValT>
+//_ValT redeemStr(char* &stream, char* end)
+//{
+//  if(stream == end)
+//    return "";
+//  _ValT r = (_ValT)constructStr(stream + sizeof(_HeaderT),
+//                                 scopeLen<_HeaderT>(stream));
+//  stream += sizeof(_HeaderT) + scopeLen<_HeaderT>(stream);
+//  return r;
+//}
+
+template <typename _HeaderT>
+std::string redeemStr(char* &stream, char* end)
 {
   if(stream == end)
     return "";
-  _ValT r = (_ValT)constructStr(stream + sizeof(_HeaderT),
-                                 scopeLen<_HeaderT>(stream));
+  std::string r(stream + sizeof(_HeaderT), scopeLen<_HeaderT>(stream));
   stream += sizeof(_HeaderT) + scopeLen<_HeaderT>(stream);
   return r;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

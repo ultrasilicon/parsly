@@ -34,7 +34,7 @@ TEST(TestRedeemVal, SingleLayerPacket)
   pos += strlen(s);
 
   auto end = scopeEnd<uint32_t>(stream);
-  EXPECT_EQ("hello?", string(redeemVal<uint32_t, char*>(stream, end)));
+  EXPECT_EQ("hello?", string(redeemStr<uint32_t>(stream, end)));
 }
 
 TEST(TestRedeemVal, OverRedeemVariable)
@@ -80,7 +80,7 @@ TEST(TestRedeemVal, MultiLayerPacket)
 
   auto begin = scopeBegin<uint32_t>(stream);
   auto end = scopeEnd<uint32_t>(stream);
-  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(begin, end)));
+  EXPECT_EQ(string("hello?"), string(redeemStr<uint32_t>(begin, end)));
 }
 
 TEST(TestRedeemVal, MultiLayerMultiCellPacket)
@@ -124,8 +124,8 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
 
   auto p = scopeBegin<uint32_t>(stream);
   auto end = scopeEnd<uint32_t>(stream);
-  EXPECT_EQ(string("hello?"), string(redeemVal<uint32_t, char*>(p, end)));
-  EXPECT_EQ(string("world"), string(redeemVal<uint32_t, char*>(p, end)));
+  EXPECT_EQ(string("hello?"), string(redeemStr<uint32_t>(p, end)));
+  EXPECT_EQ(string("world"), string(redeemStr<uint32_t>(p, end)));
 }
 
 TEST(TestRedeemVal, MultiLayerOverRedeemString)
@@ -170,7 +170,7 @@ TEST(TestRedeemVal, MultiLayerOverRedeemString)
   auto p = scopeBegin<uint32_t>(stream);
   auto end = scopeEnd<uint32_t>(stream);
   for(std::string s : {"hello?", "world", "", "", ""})
-    EXPECT_EQ(s, string(redeemVal<uint32_t, char*>(p, end)));
+    EXPECT_EQ(s, string(redeemStr<uint32_t>(p, end)));
 
 }
 
