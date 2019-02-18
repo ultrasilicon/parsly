@@ -26,12 +26,14 @@ public:
 
   std::function<void(Packet* p)> onMessage;
 
+
 private:
   char *encode(Packet *packet);             //! Weipu
   Packet* decode(char *stream, const size_t &size); //! Tim
 
   bool decodable(char *stream, const size_t &size);
   bool decodeCleanup(char* pos, char *stream, const size_t &size);
+
 
   std::string decode_buffer;
   NetStack *m_net_stack;
@@ -40,15 +42,6 @@ private:
 
 using pe_str_len_t = uint32_t;
 
-static char* constructStr(char* b, size_t len)
-{
-  auto val = (char*) malloc(len + 1);
-  for(long c = 0; c < len; ++ c, ++ b) {
-        val[c] = *b;
-     }
-  val[len] = '\0';
-  return val;
-}
 
 template <typename _HeaderT>
 _HeaderT scopeLen(const char *stream)
