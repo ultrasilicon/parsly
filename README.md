@@ -2,7 +2,7 @@
 > **Describe & deploy net protocol with simply a JSON file.**
 * Parsely is a library which helps developer **serialize** runtime **application data** into **network packets**, according to the **network protocol** defined by the user in a **JSON file**.
 
-#### Get Started:
+## Get Started:
 
 * Step 1: Design and define your protocol in a  json file
 
