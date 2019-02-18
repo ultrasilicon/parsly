@@ -1,17 +1,10 @@
 # Parsely
 **Describe & deploy net protocol with simply a JSON file.**
-## Inspiration
-
-* Nowadays, although is it very easy to create an App with internet communication module, it is still difficult to achive fast development of *high performance* server and clients. 
-* Especially when devloping an App with customized network protocol, every time the developer add or delete something from the protocol, they need to rewrite, in the worst case, the whole parsing logic.
-* We decided that we are going to simplify this process by building a *pre-processor/pre-compiler* called **POP** (Pre-processor of Parsely) with a library called **Parsely** working with it. And the pre-processor pushes all the nasty time consuming work to compile/pre-compile time. 
 
 ## What it does
+* Parsely is a library which helps developer **serialize** runtime **application data** into **network packets**, according to the **network protocol** defined by the user in a **JSON file**.
 
-* Parsely, by it name, must to have something to do with parsing. It deserializes **TCP** stream in **Binary** into small packets. **UDP** will be supported in the future.
-* Parsely is a library which helps user, as a developer, **serialize** runtime **application data** into **network packets**, according to the **network protocol** defined by the user in a **JSON file**.
-
-#### How it works:
+#### Get Started:
 
 * Step 1: Design and define your protocol in a  json file
 
@@ -131,26 +124,6 @@
       // User code...
   }
   ```
-
-  
-
-  
-
-## How we built it
-
-* Parsing utility (library it self) functions and classes: **C++**.
-* POP pre-compiler: **Python**
-
-## Challenges we ran into
-
-* Our wheel `Variant` class got its data member's memory corrupted several times because of a deep-copy that is not deep enough.
-
-## Accomplishments that we're proud of
-
-* Its is really fast and easy to use!!!!
-
-- We wrote and used our own **wheels**!!!! 
-- All the wheels are well test-cased and uses modern C++ templates for high runtime performance.
 
 ## What's next for Parsely
 
