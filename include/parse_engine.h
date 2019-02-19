@@ -23,8 +23,8 @@ public:
 
 
 private:
-  char *encode(Packet *packet);             //! Weipu
-  Packet* decode(char *stream, const size_t &size); //! Tim
+  char *encode(Packet *packet);
+  Packet* decode(char *stream, const size_t &size);
 
   bool decodable(char *stream, const size_t &size);
   void decodeCleanup(char* pos, char *stream, const size_t &size);
