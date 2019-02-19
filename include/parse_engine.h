@@ -12,11 +12,6 @@
 #include "sized_mask.h"
 
 
-#define __TYPE 100
-#define _DATA_IDX -1
-#define __TYPE_ARGS int
-
-
 class ParseEngine
 {
 public:
@@ -31,7 +26,7 @@ private:
   Packet* decode(char *stream, const size_t &size); //! Tim
 
   bool decodable(char *stream, const size_t &size);
-  bool decodeCleanup(char* pos, char *stream, const size_t &size);
+  void decodeCleanup(char* pos, char *stream, const size_t &size);
 
   std::string decode_buffer;
   NetStack *m_net_stack;
@@ -53,7 +48,7 @@ static char* constructStr(char* b, size_t len)
 template <typename _HeaderT>
 _HeaderT scopeLen(const char *stream)
 {
-  return ((SizedMask<_HeaderT>*) stream)->header;
+  return (reinterpret_cast<SizedMask<_HeaderT>*>(const_cast<char*>(stream)))->header;
 }
 
 template <typename _HeaderT>
@@ -79,7 +74,7 @@ _ValT redeemVal(char* &stream, const char* end)
 {
   if(stream == end)
     return _ValT();
-  _ValT r = ((SizedMask<_ValT>*) stream)->header;
+  _ValT r = (reinterpret_cast<SizedMask<_ValT>*>(stream))->header;
   stream += sizeof(_ValT);
   return r;
 }

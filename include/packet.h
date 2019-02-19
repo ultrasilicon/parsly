@@ -46,7 +46,9 @@ struct variant
         m_curr_tag = static_cast<tagger<_T>&>(m_tagger).value;
     }
 
-    variant() : variant(0) {}
+    variant()
+      : variant(0)
+    {}
 
     variant(const variant& that)
         : m_p(new char[m_size]{})

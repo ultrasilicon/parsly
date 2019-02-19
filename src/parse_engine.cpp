@@ -30,7 +30,7 @@ bool ParseEngine::decodable(char *stream, const size_t &size)
   return true;
 }
 
-bool ParseEngine::decodeCleanup(char *pos, char *stream, const size_t &size)
+void ParseEngine::decodeCleanup(char *pos, char *stream, const size_t &size)
 {
   if(pos != stream + size)
       decode_buffer += std::string(pos, stream + size - pos);

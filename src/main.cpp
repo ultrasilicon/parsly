@@ -87,7 +87,7 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
     std::vector<char> stream(sizeof(uint32_t));
     size_t pos{};
 
-    Packet pk {{std::string{"hello,"}, std::string{"world!"}, std::string{"duckhacks"}, uint32_t{2019}}, __TYPE};
+    Packet pk {{std::string{"hello,"}, std::string{"world!"}, std::string{"duckhacks"}, uint32_t{2019}}, 100};
 
     *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4; // set main header
     pos += sizeof(uint32_t); // skip main header
