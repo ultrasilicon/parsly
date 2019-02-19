@@ -11,12 +11,6 @@
 
 using namespace std;
 
-TEST(TestConstructStr, Cons1)
-{
-    char* s = "hello?";
-    EXPECT_EQ("ell", string(constructStr(s + 1, 3)));
-}
-
 TEST(TestRedeemVal, SingleLayerPacket)
 {
   //! [6:hello?]

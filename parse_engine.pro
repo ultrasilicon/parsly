@@ -9,7 +9,6 @@ INCLUDEPATH += ./include
 
 SOURCES += \
     src/main.cpp \
-    src/packet.cpp \
     src/net_stack.cpp \
     src/parse_engine.cpp \
     src/parse_engine_decode_pop.cpp \
