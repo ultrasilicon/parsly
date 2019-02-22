@@ -102,7 +102,7 @@ def pop_wrap(code, prefix, postfix):
 
 
 def pop_case(code, case_num, comment):
-	return "\tcase " + str(case_num) + ": { // " + comment + "\n" + code + "\t} break;\n"
+	return "\tcase " + str(case_num) + ": { // " + comment + "\n" + code + "\t\tbreak;\n\t}\n"
 
 
 def pop_switch(code, enum_name):
