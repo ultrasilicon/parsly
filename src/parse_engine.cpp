@@ -16,7 +16,7 @@ void ParseEngine::message(Packet *p, std::string &ip)
 
 bool ParseEngine::decodable(char *stream, const size_t &size)
 {
-  decode_buffer += std::string(stream, size);
+  decode_buffer.append(stream, size);
   if(decode_buffer.size() < sizeof(uint32_t))
     {
       printf("ParselyEngine: Returning - Header Incomplete / Empty Packet");
@@ -32,8 +32,10 @@ bool ParseEngine::decodable(char *stream, const size_t &size)
 
 void ParseEngine::decodeCleanup(char *pos, char *stream, const size_t &size)
 {
-  if(pos != stream + size)
-      decode_buffer += std::string(pos, stream + size - pos);
+  if(pos == stream + size)
+    decode_buffer.clear();
+  else
+    decode_buffer.erase(decode_buffer.begin(), decode_buffer.begin() + (pos - stream));
   if(stream)
     free(stream);
 }
