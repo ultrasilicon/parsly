@@ -1,6 +1,5 @@
 #include "parse_engine.h"
-
-
+#include <iostream>
 
 ParseEngine::ParseEngine(NetStack *ns)
   : m_net_stack(ns)
@@ -8,10 +7,15 @@ ParseEngine::ParseEngine(NetStack *ns)
 }
 
 
-void ParseEngine::message(Packet *p, std::string &ip)
+void ParseEngine::message(Packet *p, const char *ip)
 {
+//  std::cout << "encoded: " << encode(p) << std::endl;
   if(p)
-    m_net_stack->write(encode(p), ip);
+    {
+      iovec v = encode(p);
+      std::string s((char*)v.iov_base, v.iov_len);
+      m_net_stack->write(s, ip);
+    }
 }
 
 bool ParseEngine::decodable(char *stream, const size_t &size)

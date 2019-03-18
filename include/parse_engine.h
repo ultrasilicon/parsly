@@ -3,6 +3,7 @@
 #include "net_stack.h"
 #include "packet.h"
 
+#include <sys/uio.h>
 #include <string>
 #include <string.h>
 #include <utility>
@@ -17,13 +18,13 @@ class ParseEngine
 public:
   ParseEngine(NetStack* ns);
 
-  void message(Packet* p, std::string &ip);
+  void message(Packet* p, const char *ip);
 
   std::function<void(Packet* p)> onMessage;
 
 
 private:
-  char *encode(Packet *packet);
+  iovec encode(Packet *packet);
   Packet* decode(char *stream, const size_t &size);
 
   bool decodable(char *stream, const size_t &size);

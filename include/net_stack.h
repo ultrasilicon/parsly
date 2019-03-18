@@ -7,9 +7,8 @@ class NetStack
 {
 public:
   NetStack();
-  virtual ~NetStack();
 
-  virtual int write(char* data, std::string ip);
+  virtual int write(std::string &data, const char *ip);
 
 protected:
 };

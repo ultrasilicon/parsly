@@ -15,6 +15,40 @@ Packet* ParseEngine::decode(char* stream, const size_t &size)
   auto flag = redeemVal<uint8_t>(pos, end);
 
   ///[BEGIN _POP_DECODER_INJECT_POINT]////
+	switch (flag) {
+	case 0: { // HeartBeat
+		return new Packet{{
+			redeemStr<pe_str_len_t>(pos, end), // uuid
+			redeemStr<pe_str_len_t>(pos, end), // usrName
+			redeemStr<pe_str_len_t>(pos, end), // publicKey
+			redeemVal<uint32_t>(pos, end), // timestamp
+		}, flag};
+		break;
+	}
+	case 1: { // ConnectionInfo
+		return new Packet{{
+			redeemStr<pe_str_len_t>(pos, end), // uuid
+			redeemStr<pe_str_len_t>(pos, end), // peers
+		}, flag};
+		break;
+	}
+	case 2: { // TextMessage
+		return new Packet{{
+			redeemStr<pe_str_len_t>(pos, end), // uuid
+			redeemStr<pe_str_len_t>(pos, end), // msgId
+			redeemStr<pe_str_len_t>(pos, end), // msg
+		}, flag};
+		break;
+	}
+	case 3: { // ImageMessage
+		return new Packet{{
+			redeemStr<pe_str_len_t>(pos, end), // uuid
+			redeemStr<pe_str_len_t>(pos, end), // msgId
+			redeemStr<pe_str_len_t>(pos, end), // msg
+		}, flag};
+		break;
+	}
+	}
   ///[END _POP_DECODER_INJECT_POINT]////
 
   decodeCleanup(pos, stream, size);

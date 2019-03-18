@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <variant>
 #include <type_traits>
 
 template<size_t _MAX, typename _T, typename... _Ts>
@@ -95,8 +96,8 @@ using variant_t = variant<
 
 struct Packet
 {
-    std::vector<variant_t> data;
-    uint8_t msgType;
+  std::vector<variant_t> data;
+  uint8_t msgType;
 };
 
 
