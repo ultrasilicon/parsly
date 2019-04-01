@@ -6,7 +6,8 @@ NetStack::NetStack()
 
 }
 
-int NetStack::write(std::string &, const char *)
+NetStack::~NetStack()
 {
-  return 0;
+
 }
+

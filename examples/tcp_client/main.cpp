@@ -1,10 +1,9 @@
 #include <iostream>
 #include <string>
-#include <parsly/net_stack.h>
 #include <parsly/packet.h>
 #include <parsly/parse_engine.h>
-#include <libparsley/PTcpSocket.h>
-#include <libparsley/PTimer.h>
+#include <libparsley/tcp_socket.h>
+#include <libparsley/timer.h>
 
 using namespace std;
 using namespace Parsley;
@@ -43,8 +42,6 @@ public:
 private:
   TcpSocket *sock;
 };
-
-
 
 void timeout_cb(Timer *t)
 {
