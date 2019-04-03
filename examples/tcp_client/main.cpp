@@ -20,12 +20,19 @@ class MyNetStack
 {
 public:
   MyNetStack(Loop *l)
+    : sock(new TcpSocket(l))
   {
-    sock = new TcpSocket(l);
-    sock->connect("127.0.0.1", 63773);
-    sock->start();
+    connect("127.0.0.1", 63773);
   }
+
   virtual ~MyNetStack() {}
+
+  int connect(const std::string &ip, const int& addr)
+  {
+    sock->connect(ip.c_str(), addr);
+    sock->start();
+    return 0;
+  }
 
   int write(string& data, const char *)
   {
@@ -69,7 +76,7 @@ int main()
   engine = new ParseEngine(net);
 
   Timer *timer = new Timer(3000, 1000, loop);
-  connect(&timer->onTimedOut, &timeout_cb);
+  on(&timer->onTimedOut, &timeout_cb);
   timer->start();
 
   return loop->run();

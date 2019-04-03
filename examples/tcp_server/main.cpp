@@ -20,8 +20,13 @@ public:
   MyNetStack(Loop *l)
     : sock(new TcpSocket(l))
   {}
+
   virtual ~MyNetStack()
   {}
+
+  int connect(const std::string&, const int&){
+    return 0;
+  }
 
   int write(string& data, const char *)
   {
@@ -56,7 +61,7 @@ void new_connection_cb(TcpServer* s)
 
   TcpSocket *sock = ns->getSocket();
   clients.push_back(sock);
-  connect(&sock->onReadyRead, &receive_cb);
+  on(&sock->onReadyRead, &receive_cb);
   s->accept(sock);
 }
 
@@ -65,7 +70,7 @@ int main()
   TcpServer *server = new TcpServer(&loop);
   server->bind("0.0.0.0", 63773);
   server->listen();
-  connect(&server->onNewConnection, &new_connection_cb);
+  on(&server->onNewConnection, &new_connection_cb);
 
   return loop.run();
 }
