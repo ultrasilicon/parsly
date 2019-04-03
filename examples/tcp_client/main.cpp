@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <parsly/packet.h>
-#include <parsly/parse_engine.h>
+#include <parsly/net_stack.h>
 #include <libparsley/tcp_socket.h>
 #include <libparsley/timer.h>
 
@@ -11,7 +11,6 @@ using namespace Parsley;
 class MyNetStack;
 
 static MyNetStack* net;
-static ParseEngine* engine;
 static Loop* loop;
 static int counter = 0;
 
@@ -34,7 +33,7 @@ public:
     return 0;
   }
 
-  int write(string& data, const char *)
+  int write(const std::string& data, const char*)
   {
     sock->write(data);
     cout << "MyNetStack::write: " << data << endl;
@@ -61,11 +60,12 @@ void timeout_cb(Timer *t)
               },
               0
             });
-  engine->message(&pk, "127.0.0.1");
+  net->message(&pk, "127.0.0.1");
 
   if(3 == ++ counter)
     {
       t->stop();
+      net->stop();
     }
 }
 
@@ -73,7 +73,6 @@ int main()
 {
   loop = new Loop();
   net = new MyNetStack(loop);
-  engine = new ParseEngine(net);
 
   Timer *timer = new Timer(3000, 1000, loop);
   on(&timer->onTimedOut, &timeout_cb);

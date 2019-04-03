@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <libparsley/tcp_server.h>
-#include <parsly/parse_engine.h>
+#include <parsly/net_stack.h>
 
 using namespace std;
 using namespace Parsley;
@@ -24,11 +24,12 @@ public:
   virtual ~MyNetStack()
   {}
 
-  int connect(const std::string&, const int&){
+  int connect(const std::string&, const int&)
+  {
     return 0;
   }
 
-  int write(string& data, const char *)
+  int write(const std::string& data, const char*)
   {
     sock->write(data);
     cout << "MyNetStack::write: " << data << endl;
@@ -57,7 +58,6 @@ void receive_cb(string& data, TcpSocket* sock)
 void new_connection_cb(TcpServer* s)
 {
   MyNetStack* ns = new MyNetStack(&loop);
-  ParseEngine *engine = new ParseEngine(ns);
 
   TcpSocket *sock = ns->getSocket();
   clients.push_back(sock);
