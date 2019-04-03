@@ -1,6 +1,5 @@
 #pragma once
 
-#include "net_stack.h"
 #include "packet.h"
 
 #include <sys/uio.h>
@@ -16,23 +15,18 @@
 class ParseEngine
 {
 public:
-  ParseEngine(NetStack* ns);
-
-  void message(Packet* p, const char *ip);
-
-  std::function<void(Packet*)> onMessage;
+  ParseEngine();
+  iovec encode(Packet *packet);
+  Packet* decode(char *stream, const size_t &size);
 
 
 private:
-  iovec encode(Packet *packet);
-  Packet* decode(char *stream, const size_t &size);
 
   bool decodable(char *stream, const size_t &size);
   void decodeCleanup(char* pos, char *stream, const size_t &size);
 
 
   std::string decode_buffer;
-  NetStack *m_net_stack;
 
 };
 
