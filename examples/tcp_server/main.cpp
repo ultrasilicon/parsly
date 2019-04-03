@@ -1,8 +1,5 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <libparsley/tcp_server.h>
-#include <parsly/net_stack.h>
+#include "my_net_stack.h"
+#include "libparsley/tcp_server.h"
 
 using namespace std;
 using namespace Parsley;
@@ -12,43 +9,6 @@ class MyNetStack;
 
 static Loop loop;
 static vector<TcpSocket*> clients;
-
-class MyNetStack
-    : public NetStack
-{
-public:
-  MyNetStack(Loop *l)
-    : sock(new TcpSocket(l))
-  {}
-
-  virtual ~MyNetStack()
-  {}
-
-  int connect(const std::string&, const int&)
-  {
-    return 0;
-  }
-
-  int write(const std::string& data, const char*)
-  {
-    sock->write(data);
-    cout << "MyNetStack::write: " << data << endl;
-    return 0;
-  }
-
-  void stop()
-  {
-    sock->close();
-  }
-
-  TcpSocket* getSocket() const
-  {
-    return sock;
-  }
-
-private:
-  TcpSocket *sock;
-};
 
 void receive_cb(string& data, TcpSocket* sock)
 {

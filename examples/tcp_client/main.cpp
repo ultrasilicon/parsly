@@ -1,53 +1,11 @@
-#include <iostream>
-#include <string>
-#include <parsly/packet.h>
-#include <parsly/net_stack.h>
-#include <libparsley/tcp_socket.h>
-#include <libparsley/timer.h>
+#include "my_net_stack.h"
+
 
 using namespace std;
 using namespace Parsley;
 
-class MyNetStack;
-
 static MyNetStack* net;
-static Loop* loop;
 static int counter = 0;
-
-class MyNetStack
-    : public NetStack
-{
-public:
-  MyNetStack(Loop *l)
-    : sock(new TcpSocket(l))
-  {
-    connect("127.0.0.1", 63773);
-  }
-
-  virtual ~MyNetStack() {}
-
-  int connect(const std::string &ip, const int& addr)
-  {
-    sock->connect(ip.c_str(), addr);
-    sock->start();
-    return 0;
-  }
-
-  int write(const std::string& data, const char*)
-  {
-    sock->write(data);
-    cout << "MyNetStack::write: " << data << endl;
-    return 0;
-  }
-
-  void stop()
-  {
-    sock->close();
-  }
-
-private:
-  TcpSocket *sock;
-};
 
 void timeout_cb(Timer *t)
 {
@@ -60,7 +18,7 @@ void timeout_cb(Timer *t)
               },
               0
             });
-  net->message(&pk, "127.0.0.1");
+  net->message(&pk);
 
   if(3 == ++ counter)
     {
@@ -71,14 +29,15 @@ void timeout_cb(Timer *t)
 
 int main()
 {
-  loop = new Loop();
-  net = new MyNetStack(loop);
+  Loop loop;;
+  net = new MyNetStack(&loop);
+  net->connect("127.0.0.1", 63773);
 
-  Timer *timer = new Timer(3000, 1000, loop);
+  Timer *timer = new Timer(3000, 1000, &loop);
   on(&timer->onTimedOut, &timeout_cb);
   timer->start();
 
-  return loop->run();
+  return loop.run();
 }
 
 

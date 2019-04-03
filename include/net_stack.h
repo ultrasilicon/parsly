@@ -13,7 +13,7 @@ public:
   NetStack();
   virtual ~NetStack();
 
-  virtual void message(Packet *p, const char* ip);
+  virtual void message(Packet *p, const char* ip = "");
   virtual int connect(const std::string& ip, const int& addr) = 0;
 
 protected:
