@@ -1,10 +1,8 @@
-#include "my_net_stack.h"
+#include "../common/my_net_stack.h"
 #include "libparsley/tcp_server.h"
 
 using namespace std;
 using namespace Parsley;
-
-class MyNetStack;
 
 
 static Loop loop;

@@ -5,7 +5,7 @@ CONFIG -= qt
 
 SOURCES += \
         main.cpp \
-    my_net_stack.cpp
+    ../common/my_net_stack.cpp
 
 mac {
     PKG_CONFIG = /usr/local/bin/pkg-config
@@ -19,6 +19,6 @@ PKGCONFIG += \
     parsly
 
 HEADERS += \
-    my_net_stack.h
+    ../common/my_net_stack.h
 
 
