@@ -20,7 +20,7 @@ public:
 
   void message(Packet* p, const char *ip);
 
-  std::function<void(Packet* p)> onMessage;
+  std::function<void(Packet*)> onMessage;
 
 
 private:

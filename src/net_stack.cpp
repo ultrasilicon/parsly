@@ -11,3 +11,8 @@ NetStack::~NetStack()
 
 }
 
+void NetStack::message(Packet *p, const char *ip)
+{
+
+}
+
