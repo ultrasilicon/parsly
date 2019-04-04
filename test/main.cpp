@@ -1,13 +1,12 @@
 #include <iostream>
-
-
-#include "gtest/gtest.h"
-
-#include "string.h"
-
-#include "parse_engine.h"
-
+#include <string.h>
 #include <vector>
+
+#include <gtest/gtest.h>
+
+#include "../include/parse_engine.h"
+#include "../include/proto_compiler.h"
+
 
 using namespace std;
 
