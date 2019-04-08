@@ -19,7 +19,6 @@ public:
   iovec encode(Packet *packet);
   Packet* decode(char *stream, const size_t &size);
 
-//  static void insertStr(std::vector<char>& stream, size_t& pos, const std::string& s);
 private:
 
   bool decodable(char *stream, const size_t &size);
@@ -100,7 +99,7 @@ void insertVal(std::vector<char>& stream, size_t& pos, const _ValT& v)
  * \arg _std_string must be std::string.
  */
 template <typename _std_string>
-void insertStr(std::vector<char>& stream, size_t& pos, _std_string& s)
+void insertStr(std::vector<char>& stream, size_t& pos, const _std_string& s)
 {
     stream.resize(stream.size() + sizeof(pe_str_len_t) + s.length());
     auto len = s.length();

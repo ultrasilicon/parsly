@@ -1,27 +1,28 @@
 cmake_minimum_required(VERSION 3.9)
 
-get_filename_component(PROJECT_DIR_NAME ${CMAKE_CURRENT_LIST_DIR} NAME)
-project(${PROJECT_DIR_NAME} 
-	VERSION 0.0.1 
-	LANGUAGES CXX
-	DESCRIPTION "Describe & deploy net protocol with simply a JSON file.")
+project(test
+    LANGUAGES CXX)
 
-
-
-set(SRC
-        ../src/net_stack.cpp
-	../src/parse_engine.cpp
-	../src/parse_engine_decode_pop.cpp
-	../src/parse_engine_encode_pop.cpp
-	../src/proto_compiler.cpp
-)
+set(LIB_NAME test)
 
 set(INCLUDE
-        ../include/net_stack.h
-	../include/packet.h
-	../include/parse_engine.h
-	../include/sized_mask.h
-	../include/proto_compiler.h
+    ${PROJECT_SOURCE_DIR}/test_parse_engine.h
+    ${PROJECT_SOURCE_DIR}/test_proto_compiler.h
+    ${PROJECT_SOURCE_DIR}/common.h
+    ${PROJECT_SOURCE_DIR}/../include/net_stack.h
+    ${PROJECT_SOURCE_DIR}/../include/packet.h
+    ${PROJECT_SOURCE_DIR}/../include/parse_engine.h
+    ${PROJECT_SOURCE_DIR}/../include/sized_mask.h
+    ${PROJECT_SOURCE_DIR}/../include/proto_compiler.h
+)
+
+set(SRC
+    ${PROJECT_SOURCE_DIR}/main.cpp
+    ${PROJECT_SOURCE_DIR}/../src/net_stack.cpp
+    ${PROJECT_SOURCE_DIR}/../src/parse_engine.cpp
+    ${PROJECT_SOURCE_DIR}/../src/parse_engine_decode_pop.cpp
+    ${PROJECT_SOURCE_DIR}/../src/parse_engine_encode_pop.cpp
+    ${PROJECT_SOURCE_DIR}/../src/proto_compiler.cpp
 )
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -33,13 +34,19 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -flto")
 
 
-
 include_directories(/usr/local/include)
-include_directories(./include)
+include_directories(../include)
 
 find_package(GTest REQUIRED)
 
-add_executable(PROJECT_DIR_NAME main.cpp)
-target_link_libraries(PROJECT_DIR_NAME GTest::GTest GTest::Main)
+add_executable(${PROJECT_NAME}
+    ${INCLUDE} ${SRC})
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${CMAKE_PREFIX_PATH}/include
+    PRIVATE ${PROJECT_SOURCE_DIR}/include)
+
+target_link_libraries(${PROJECT_NAME}
+    GTest::GTest GTest::Main)
 
 
