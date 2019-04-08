@@ -7,18 +7,20 @@ SOURCES += \
         main.cpp \
     ../common/my_net_stack.cpp
 
+HEADERS += \
+    ../common/my_net_stack.h
+
+INCLUDEPATH += /usr/local/include
+
+
 mac {
     PKG_CONFIG = /usr/local/bin/pkg-config
 }
-
-INCLUDEPATH += /usr/local/include
 
 CONFIG += link_pkgconfig
 PKGCONFIG += \
     libparsley \
     parsly
 
-HEADERS += \
-    ../common/my_net_stack.h
 
 

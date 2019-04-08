@@ -14,12 +14,14 @@ set(SRC
 	src/parse_engine.cpp
 	src/parse_engine_decode_pop.cpp
 	src/parse_engine_encode_pop.cpp
+	src/proto_compiler.cpp
 )
 
 set(INCLUDE
 	include/net_stack.h
 	include/packet.h
 	include/parse_engine.h
+	include/proto_compiler.h
 	include/sized_mask.h
 )
 
