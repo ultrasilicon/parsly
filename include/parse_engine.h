@@ -19,15 +19,13 @@ public:
   iovec encode(Packet *packet);
   Packet* decode(char *stream, const size_t &size);
 
-
+//  static void insertStr(std::vector<char>& stream, size_t& pos, const std::string& s);
 private:
 
   bool decodable(char *stream, const size_t &size);
   void decodeCleanup(char* pos, char *stream, const size_t &size);
 
-
   std::string decode_buffer;
-
 };
 
 using pe_str_len_t = uint32_t;
@@ -96,7 +94,13 @@ void insertVal(std::vector<char>& stream, size_t& pos, const _ValT& v)
     pos += sizeof(_ValT);
 }
 
-void insertStr(std::vector<char>& stream, size_t& pos, const std::string& s)
+/*!
+ * \brief: If this funciton is not a template, it will have compile errors, because it's not in any class.
+ * Put it here for now as in the future it all theseparsing functions will be moved to a pre-compile module.
+ * \arg _std_string must be std::string.
+ */
+template <typename _std_string>
+void insertStr(std::vector<char>& stream, size_t& pos, _std_string& s)
 {
     stream.resize(stream.size() + sizeof(pe_str_len_t) + s.length());
     auto len = s.length();

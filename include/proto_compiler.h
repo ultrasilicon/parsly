@@ -10,13 +10,13 @@ public:
     explicit ProtoCompiler();
 
 private:
-    static inline std::string cpp_wrap(const std::string& block, const std::string& prefix, const std::string& postfix);
-    static inline std::string cpp_switch(const std::string& block, const std::string& var);
-    static inline std::string cpp_case(const std::string& block, const std::string& val, const std::string& comment);
-    static inline std::string cfn_redeem(const std::string& type, const std::string& comment);
-    static inline std::string cfn_insert(const std::string& type, const std::string& index, const std::string& comment);
+    inline std::string cppWrap(const std::string& block, const std::string& prefix, const std::string& postfix);
+    inline std::string cppSwitch(const std::string& block, const std::string& type);
+    inline std::string cppCase(const std::string& block, const std::string& val, const std::string& comment);
+    inline std::string fnRedeem(const std::string& type, const std::string& comment);
+    inline std::string fnInsert(const std::string& type, const std::string& index, const std::string& comment);
 
-    inline std::string util_indent(std::string block, const std::string& indent = "\t");
+    inline std::string utilIndent(std::string block, const std::string& indent = "\t");
 
     std::string _indent_str = "  ";
 };
