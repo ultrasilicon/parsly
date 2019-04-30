@@ -83,7 +83,8 @@ struct variant
 };
 
 using variant_t = variant<
-    int8_t
+    bool
+    , int8_t
     , int16_t
     , int32_t
     , int64_t

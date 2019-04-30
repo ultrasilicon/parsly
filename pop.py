@@ -3,6 +3,7 @@ import os
 import json
 
 str_to_type = {
+	"bool"   : "bool",
 	"int8"   : "int8_t",
 	"int16"  : "int16_t",
 	"int32"  : "int32_t",
