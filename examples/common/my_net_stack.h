@@ -9,12 +9,12 @@
 using namespace std;
 using namespace Parsley;
 
-class MyNetStack
+class ClientSocket
     : public NetStack
 {
 public:
-  MyNetStack(Loop* l);
-  virtual ~MyNetStack();
+  ClientSocket(Loop* l);
+  virtual ~ClientSocket();
 
   int connect(const std::string& ip, const int& addr);
   void stop();

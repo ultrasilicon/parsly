@@ -4,10 +4,10 @@ using namespace std;
 using namespace Parsley;
 
 
-static MyNetStack* net;
+static ClientSocket* net;
 static int counter = 0;
 
-void timeout_cb(Timer *t)
+void send_heartbeat(Timer *t)
 {
   Packet pk({
               {
@@ -30,11 +30,11 @@ void timeout_cb(Timer *t)
 int main()
 {
   Loop loop;;
-  net = new MyNetStack(&loop);
+  net = new ClientSocket(&loop);
   net->connect("127.0.0.1", 63773);
 
   Timer *timer = new Timer(3000, 1000, &loop);
-  on(&timer->onTimedOut, &timeout_cb);
+  on(&timer->onTimedOut, &send_heartbeat);
   timer->start();
 
   return loop.run();

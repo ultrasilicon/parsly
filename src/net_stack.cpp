@@ -23,6 +23,7 @@ void NetStack::message(Packet *p, const char *ip)
 
 int NetStack::connect(const std::string &ip, const int &addr)
 {
+
 }
 
 void NetStack::read(char *data)

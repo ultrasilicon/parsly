@@ -19,7 +19,7 @@ public:
 
 protected:
   virtual int write(const std::string& p, const char* ip) = 0;
-  virtual void read(char* data);
+  void read(char* data);
   ParseEngine engine;
 };
 

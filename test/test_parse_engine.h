@@ -78,9 +78,10 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
 
     Packet pk {{std::string{"hello,"}, std::string{"world!"}, std::string{"duckhacks"}, uint32_t{2019}}, 100};
 
-    *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4; // set main header
+    *(uint32_t*)&stream[0] = (4 + 6) + (4 + 6) + (4 + 9) + 4 + 1; // set main header
     pos += sizeof(uint32_t); // skip main header
 
+    insertVal(stream, pos, pk.msgType);
     insertStr(stream, pos, pk.data[0].get<std::string>());
     insertStr(stream, pos, pk.data[1].get<std::string>());
     insertStr(stream, pos, pk.data[2].get<std::string>());
@@ -88,10 +89,25 @@ TEST(TestRedeemVal, MultiLayerMultiCellPacket)
 
     auto p = scopeBegin<uint32_t>(stream.data());
     auto end = scopeEnd<uint32_t>(stream.data());
+    EXPECT_EQ(uint8_t{100}, uint8_t(redeemVal<uint8_t>(p, end)));
     EXPECT_EQ(string("hello,"), string(redeemStr<uint32_t>(p, end)));
     EXPECT_EQ(string("world!"), string(redeemStr<uint32_t>(p, end)));
     EXPECT_EQ(string("duckhacks"), string(redeemStr<uint32_t>(p, end)));
     EXPECT_EQ(uint32_t{2019}, uint32_t(redeemVal<uint32_t>(p, end)));
+}
+
+TEST(TestEncode, MultiLayerMultiCellPacket)
+{
+    Packet pk {{std::string{"hello,"}}, 1};
+
+    iovec v = ParseEngine::encode(&pk);
+
+    std::vector<char> stream((char*)v.iov_base, (char*)v.iov_base + v.iov_len);
+
+    auto p = scopeBegin<uint32_t>(stream.data());
+    auto end = scopeEnd<uint32_t>(stream.data());
+    EXPECT_EQ(uint8_t{1}, uint8_t(redeemVal<uint8_t>(p, end)));
+    EXPECT_EQ(string("hello,"), string(redeemStr<uint32_t>(p, end)));
 }
 
 TEST(TestRedeemVal, MultiLayerOverRedeemString)

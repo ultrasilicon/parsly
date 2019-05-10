@@ -15,7 +15,7 @@ void receive_cb(string& data, TcpSocket* sock)
 
 void new_connection_cb(TcpServer* s)
 {
-  MyNetStack* ns = new MyNetStack(&loop);
+  ClientSocket* ns = new ClientSocket(&loop);
 
   TcpSocket *sock = ns->getSocket();
   clients.push_back(sock);

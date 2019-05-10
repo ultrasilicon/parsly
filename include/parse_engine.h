@@ -16,11 +16,10 @@ class ParseEngine
 {
 public:
   ParseEngine();
-  iovec encode(Packet *packet);
+  static iovec encode(Packet *packet);
   Packet* decode(char *stream, const size_t &size);
 
 private:
-
   bool decodable(char *stream, const size_t &size);
   void decodeCleanup(char* pos, char *stream, const size_t &size);
 
@@ -55,11 +54,12 @@ std::pair<char*, char*> getScope(char *stream)
 }
 
 template <typename _ValT>
-_ValT redeemVal(char* &stream, const char* end)
+_ValT redeemVal(char*& stream, const char* end)
 {
   if(stream == end)
     return _ValT();
-  _ValT r = (reinterpret_cast<SizedMask<_ValT>*>(stream))->header;
+  SizedMask<_ValT>* p = (reinterpret_cast<SizedMask<_ValT>*>(stream));
+  _ValT r = p->header;
   stream += sizeof(_ValT);
   return r;
 }
@@ -80,7 +80,9 @@ std::string redeemStr(char* &stream, const char* end)
 {
   if(stream == end)
     return "";
-  std::string r(stream + sizeof(_HeaderT), scopeLen<_HeaderT>(stream));
+  auto ptr = stream + sizeof(_HeaderT);
+  auto size = scopeLen<_HeaderT>(stream);
+  std::string r(ptr, size);
   stream += sizeof(_HeaderT) + scopeLen<_HeaderT>(stream);
   return r;
 }
