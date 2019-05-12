@@ -16,17 +16,41 @@ std::string ProtoCompiler::cppSwitch(const std::string &block, const std::string
 
 std::string ProtoCompiler::cppCase(const std::string &block, const std::string &val, const std::string &comment)
 {
-
+    return "case " + val + ": {\n" + utilIndent(block) + " break;\n}\n";
 }
 
 std::string ProtoCompiler::fnRedeem(const std::string &type, const std::string &comment)
 {
-
+    if(type == "string")
+    {
+        return utilIndent("redeemStr<pe_str_len_t>(pos, end), // " + comment + "\n");
+    }
+    else
+    {
+        if(str_to_type_.find(type) != str_to_type_.end())
+        {
+            fprintf(stderr, "error: unknown type %s.\n", type.c_str());
+            exit(1);
+        }
+        return utilIndent("redeemVal<" + str_to_type_[type] + ">(pos, end), // " + comment + "\n");
+    }
 }
 
 std::string ProtoCompiler::fnInsert(const std::string &type, const std::string &index, const std::string &comment)
 {
-
+    if(type == "string")
+    {
+        return utilIndent("insertStr(stream, pos, packet->data[" + index + "].get<std::string>()); // " + comment + "\n");
+    }
+    else
+    {
+        if(str_to_type_.find(type) != str_to_type_.end())
+        {
+            fprintf(stderr, "error: unknown type %s.\n", type.c_str());
+            exit(1);
+        }
+        return utilIndent("insertVal(stream, pos, packet->data[" + index + "].get<" + str_to_type_[type] + ">()); // " + comment + "\n");
+    }
 }
 
 std::string ProtoCompiler::utilIndent(std::string block, const std::string &indent)

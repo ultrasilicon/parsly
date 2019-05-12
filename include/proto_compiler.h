@@ -2,6 +2,7 @@
 #define PRE_PROC_H
 
 #include <string>
+#include <map>
 #include <stdexcept>
 
 class ProtoCompiler
@@ -18,7 +19,8 @@ private:
 
     inline std::string utilIndent(std::string block, const std::string& indent = "\t");
 
-    std::string _indent_str = "  ";
+    std::string indent_str_ = "  ";
+    std::map<std::string, std::string> str_to_type_;
 };
 
 #endif // PRE_PROC_H
