@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.9)
 
-project(test
+project(test_parsly
     LANGUAGES CXX)
 
-set(LIB_NAME test)
+set(LIB_NAME test_parsly)
 
 set(INCLUDE
     ${PROJECT_SOURCE_DIR}/test_parse_engine.h

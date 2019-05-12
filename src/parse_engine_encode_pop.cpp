@@ -9,7 +9,7 @@
 iovec ParseEngine::encode(Packet *packet)
 {
     std::vector<char> stream(sizeof(uint32_t) + 1); // vector as memory management helper
-    size_t pos = decltype (stream)::size_type{};
+    size_t pos = decltype (stream)::size_type{} + sizeof(uint32_t);
     const auto flag = packet->msgType;
 
     insertVal(stream, pos, flag); // msgType
@@ -48,7 +48,7 @@ iovec ParseEngine::encode(Packet *packet)
 
     size_t mainHeader = stream.size() - sizeof(uint32_t); // total size excluding main header
 
-    memcpy(&((SizedMask<uint32_t>*) &stream.front() + sizeof (flag))->header, &mainHeader, sizeof(uint32_t)); // set main header
+    memcpy(&((SizedMask<uint32_t>*) &stream.front())->header, &mainHeader, sizeof(uint32_t)); // set main header
 
     auto* data = new char[stream.size()]; // to return
     memcpy(data, stream.data(), stream.size());
