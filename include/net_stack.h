@@ -1,25 +1,26 @@
 #pragma once
 
 #include <string>
-#include <functional>
-#include <libparsley/function.h>
-#include "packet.h"
+#include <libagio/function.h>
+#include <libagio/buffer.h>
 #include "parse_engine.h"
+
+using namespace Agio;
 
 class NetStack
 {
 public:
-  Parsley::CallbackHandler<void(Packet*)> onMessage;
+  Agio::CallbackHandler<void(Packet*)> onMessage;
 
   NetStack();
   virtual ~NetStack();
 
   virtual void message(Packet *p, const char* ip = "");
+  void read(const Buffer* data);
   virtual int connect(const std::string& ip, const int& addr);
 
 protected:
   virtual int write(const std::string& p, const char* ip) = 0;
-  void read(char* data);
   ParseEngine engine;
 };
 

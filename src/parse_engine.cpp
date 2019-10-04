@@ -5,17 +5,17 @@ ParseEngine::ParseEngine()
 {
 }
 
-bool ParseEngine::decodable(char *stream, const size_t &size)
+bool ParseEngine::decodable(const char *stream, const size_t &size)
 {
   decode_buffer.append(stream, size);
   if(decode_buffer.size() < sizeof(uint32_t))
     {
-      printf("ParselyEngine: Returning - Header Incomplete / Empty Packet");
+      printf("ParselyEngine: Returning - Header Incomplete / Empty Packet\n");
       return false;
     }
   if(decode_buffer.size() < scopeLen<uint32_t>(decode_buffer.c_str()))
     {
-      printf("ParselyEngine: Returning - Packet Imcomplete");
+      printf("ParselyEngine: Returning - Packet Imcomplete\n");
       return false;
     }
   return true;

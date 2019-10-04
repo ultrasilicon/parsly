@@ -26,10 +26,12 @@ int NetStack::connect(const std::string &ip, const int &addr)
 
 }
 
-void NetStack::read(char *data)
+void NetStack::read(const Buffer* data)
 {
-  Packet* p = engine.decode(data, strlen(data));
+  std::cout << "dataaa:" << data->data() << std::endl;
+  Packet* p = engine.decode((char*)data->data(), data->length());
   onMessage(p);
+  delete data;
 }
 
 
