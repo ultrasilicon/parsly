@@ -6,6 +6,8 @@ build*/
 *.user
 *.pro.user.*
 .idea/
+cmake-build-debug
+CMakeLists.txt.user*
 
 # OS generated files
 .DS_Store

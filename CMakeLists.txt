@@ -38,6 +38,8 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)
 
+find_package(PkgConfig)
+pkg_check_modules(LIBPARSLEY REQUIRED libagio)
 
 include_directories(/usr/local/include)
 include_directories(./include)
@@ -45,6 +47,9 @@ include_directories(./include)
 add_library(${PROJECT_NAME} SHARED
 	${INCLUDE} ${SRC}
 )
+
+target_link_libraries(${PROJECT_DIR_NAME} agio)
+
 
 # set_target_properties(${PROJECT_DIR_NAME} PROPERTIES SOVERSION 1)
 # set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
