@@ -19,6 +19,6 @@ mac {
 
 CONFIG += link_pkgconfig
 PKGCONFIG += \
-    libparsley \
+    libagio \
     parsly
 
