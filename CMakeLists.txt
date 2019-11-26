@@ -22,7 +22,6 @@ set(INCLUDE
 	include/packet.h
 	include/parse_engine.h
 	include/proto_compiler.h
-	include/sized_mask.h
 )
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)

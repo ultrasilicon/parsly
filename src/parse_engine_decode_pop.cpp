@@ -1,9 +1,10 @@
 #include "parse_engine.h"
 
 #include "net_stack.h"
-#include "packet.h"
 
-#include "sized_mask.h"
+#include <libagio/protocol_utils.h>
+
+using namespace Agio::ProtocolUtils;
 
 Packet* ParseEngine::decode(char* stream, const size_t &size)
 {

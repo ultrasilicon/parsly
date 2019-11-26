@@ -3,7 +3,9 @@
 #include "net_stack.h"
 #include "packet.h"
 
-#include "sized_mask.h"
+#include <libagio/protocol_utils.h>
+
+using namespace Agio::ProtocolUtils;
 
 
 iovec ParseEngine::encode(Packet *packet)

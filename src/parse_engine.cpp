@@ -1,5 +1,8 @@
 #include "parse_engine.h"
 #include <iostream>
+#include <libagio/protocol_utils.h>
+
+using namespace Agio::ProtocolUtils;
 
 ParseEngine::ParseEngine()
 {
