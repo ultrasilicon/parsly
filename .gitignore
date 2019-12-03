@@ -18,3 +18,7 @@ CMakeLists.txt.user*
 ehthumbs.db
 Thumbs.db
 Icon
+*.log
+*.bak
+*.gz
+*.aux
