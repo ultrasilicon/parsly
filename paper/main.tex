@@ -1,7 +1,8 @@
 \documentclass{article}
-%\twocolumn
+\twocolumn
 \usepackage{proof}
 \usepackage{tikz}
+\usepackage{hyperref}
 \usetikzlibrary{automata,positioning}
 \input{structure.tex} 
 
@@ -11,12 +12,13 @@
 \author{Han Zheng\\ \texttt{tim.zheng@hivechat.org}} 
 \date{ \today} 
 
+
+
+
 \begin{document}
 \maketitle 
 
 \section{Introductions} % Unnumbered section
-
-
 \subsection{The Cycle of Protocol Development}
 \begin{figure}[h!]
 \begin{center}
@@ -92,17 +94,72 @@ Protocol compiler is a tool that helps automate the process of network protocol 
 
 
 
-\subsection{Limitation of Current Methods}
+\section{Limitation of Current Methods}
 
 There are several protocol compilers that exists. The most commonly used one is Google's \textit{Protocol Buffers} (also known as \textit{protobuf}). Protobuf takes in a protocol declaration in their DSL called \textit{proto3} (see fig~\ref{lst:proto3}) and generates the parsing logic in a popular collection of programing languages. During the runtime, \textit{protobuf} uses BSON, the binary representation of JavaScript Object Notation (JSON), to serialize and deserialise the messages. This has given programmers the convenience to handle the data by storing the message in JSON format.\\
 
-However, there are several drawbacks in \textit{protobuf}. These drawbakcs mainly lies in the aspect of learning curve, performance and correcness proving with formal verification.\\
+However, there are several drawbacks in \textit{protobuf}. These drawbakcs mainly lies in the aspect of learning curve, performance, and correcness proving with formal verification.\\
 
 First of all, although \textit{protobuf} has a well-designed DSL that concisely describes the protocol, it is one more language for the programer to learn and one more place to make mistakes. The programers need to read the documentations and do some practices in order to get started, which makes it harder to be used in fast-paced agile developent theme.\\
 
+Speaking of performance, although \textit{protobuf} did a great job on space optimization by employing BSON for data serialization, BSON is not flexible enough for the users to tunne for optimization. We will talk about this in section~\ref{subsec:performanceAnalysis} \\
+
 Moreover, when it comes to proof driven deveolpment, where, in order to prove the correctness of the implementation of the protocol, the developer needs to get the formal specification of the DSL. However, the specificaiton is not officially available, and even if it will be available in the future, it means more work for the developer, as there is one more layer of language to reason about. \\
 
-Speaking of the performance, BSON is fairly 
+
+\section{Parsly}
+Therefore we introduce parsly, a protocol compiler that compiles protocol descriptions in JSON to C++ parsing logics. Parsley implements a serialization method that is similar to the BSON format but gives user more freedom of space optimizations. 
+
+\label{subsec:performanceAnalysis}
+\subsection{Performance Analysis}
+According to the BSON's \href{http://bsonspec.org}{documentation}, BSON is designed to be efficient in space, but in some cases it uses even more space than JSON. BSON adds the length of strings and subobjects which makes traversal faster.
+
+\begin{figure}[h!]
+\label{eq:bsonGrammar}
+\begin{align*}
+\text{document} :=&  \text{int32 e\_list "\textbackslash x00" } \\
+\text{e\_list} :=& \text{element e\_list} \\
+&| \ \text{""} \\
+\text{element}	:=& \text{"\textbackslash x01" e\_name double} \\
+&| \ \text{"\textbackslash x02" e\_name string} \\
+&| \ \text{"\textbackslash x03" e\_name document} \\
+&| \ \text{"\textbackslash x04" e\_name document} \\
+&| \ \text{"\textbackslash x05" e\_name binary} \\
+&| \ \cdots \\
+\text{string} :=& \text{int32 (byte*) "\textbackslash x00"} \\
+\text{binary} :=& \text{int32 subtype (byte*)} \\
+\text{subtype} :=& \text{"\textbackslash x00"} \\
+&| \ \text{"\textbackslash x01"} \\
+&| \ \text{"\textbackslash x02"} \\
+&| \ \cdots 
+\end{align*}
+\caption{BSON standard v1.1 grammar}
+\end{figure}
+
+BSON uses 32-bit integer to indicate the length of the strings, binaries, as well as the whole document, and this is fixed by the specification (see fig~\ref{eq:bsonGrammar}). Therefore, no matter how long the string, binary or the document is, the length of the bytes that describes the data is fixed. This has left no space for user to optimize for space. For a message containing massive short strings, BSON will not perform well at all. 
+
+\begin{figure}[h!]
+\label{eq:parslyGrammar}
+\begin{align*}
+M :=& \phi \ \psi \\
+\phi :=& \text{int8} \\
+&| \ \text{int16} \\
+&| \ \text{int32} \\
+\psi :=& \text{element } \psi \\
+&| \ \text{""} \\
+\text{int} :=& \text{int8} \\
+&| \ \text{int16} \\
+&| \ \text{int32} \\
+&| \ \text{int64} \\
+&| \ \text{int128} \\
+\text{binary} :=& \phi  \text{ (byte*)} \\
+\text{element}	:=& \text{int} \\
+&| \ \text{binary} 
+\end{align*}
+\caption{parsly serialization grammar}
+\end{figure}
+
+Parsly employs the same method for data serialization for performance, however, the length indicator size can be controlled by the user in the JSON description. This is achieved by extending the indicator $\phi$ to multiple sized data types like int8, int16 and int32, see fig~\ref{eq:parslyGrammar} (notice that parsly does not serialize the name of any data types).
 
 \begin{figure}
 \begin{center}
@@ -132,10 +189,6 @@ message Person {
 \end{center}
 \end{figure}
 
-
-\subsection{Procedureless Protocol Compiler}
-
-\subsection{Parsly}
 
 \section{Analysis} % Unnumbered section
 
