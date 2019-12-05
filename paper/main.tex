@@ -5,7 +5,9 @@
 \usepackage{hyperref}
 \usepackage{chngcntr}
 \usepackage{microtype}
+\usepackage{subcaption}
 \counterwithin{figure}{section}
+
 \usetikzlibrary{fit,automata,positioning}
 \input{structure.tex} 
 
@@ -113,6 +115,52 @@ Moreover, when it comes to proof driven deveolpment, where, in order to prove th
 \section{Parsly}
 Therefore we introduce parsly, a protocol compiler that compiles protocol descriptions in JSON to C++ parsing logics. Parsley implements a serialization method that is similar to the BSON format but gives user more freedom of space optimizations. \\
 
+\subsection{Design}
+Parsly is designed to be light-weight and portable, and works on UNIX operating systems as well as Windows. It consists of two parts, a C++ library called \textit{libagio} and a protocol compiler called \textit{pop}. Parsly implements this library (\textit{libagio}), which simplifies parsing logic for the compiler to easily work with. Taking the advantage of the modern C++ template, it is able to do many compile-time optimization for the serialization algorithms. As for the compiler, it is implemented in Python to achieve a high portability and lower cost of maintainance.  \\
+
+\begin{figure}[h!]
+\begin{center}
+\begin{tikzpicture} [
+	node distance = 7mm and -3mm,
+	every node/.style = {
+		draw=black, 
+		rounded corners, 
+		fill=gray!30, 
+		minimum width=2cm, 
+		minimum height=0.5cm,
+		align=center
+	},
+	every path/.style = {draw, -latex}
+]
+
+\node (json) {proto.json};
+\node (libagio) [right=2.2cm of json] {libagio};
+
+\node (pop) [below=1cm of libagio] {pop};
+\node (cpp) [below=1cm of pop] {server.cpp};
+\node (srcs) [below=1.3cm of json, draw, align=left] {
+other source files: \\ main.cpp\\ server.h\\ ...
+};
+\node (compiler) [below=1cm of cpp] {g++/clang};
+\node (app) [below=1cm of compiler] {app};
+
+\draw   (json) -> (pop);
+\draw   (libagio) -> (pop);
+\draw   (pop) -> (cpp);
+\draw   (srcs) -> (compiler);
+\draw   (cpp) -> (compiler);
+\draw   (compiler) -> (app);
+
+\end{tikzpicture}
+\caption{build process}
+\label{fig:builfProcess}
+\end{center}
+\end{figure}
+
+To compile a network application, the user needs to go through three steps, see fig~\ref{fig:builfProcess}. First, design and write the protocol in JSON, with the attributes and formats provided by parsly. A working example is shown in fig~\ref{lst:parslyJson}. Then the user runs \textit{pop} by supplying the JSON protocol description and the target C++ output source file. \textit{Pop} will compile the protocol description into C++ code written with the \textit{libagio}'s API, and inject the code into the parsing function of the source file. The user is then able to run the C++ compiler to build the application.
+
+
+
 \label{subsec:performanceAnalysis}
 \subsection{Performance Analysis}
 According to the BSON's \href{http://bsonspec.org}{documentation}, BSON is designed to be efficient in space, but in some cases it uses even more space than JSON because it adds the length indicator of strings and subobjects which makes traversal faster.\\
@@ -143,11 +191,11 @@ BSON uses 32-bit integer (int32) to indicate the length of the strings, binaries
 
 \begin{figure}[h!]
 \begin{align*}
-M :=& \phi \ \psi \\
+M :=& \phi \ \text{e\_list} \\
 \phi :=& \text{int8} \\
 &| \ \text{int16} \\
 &| \ \text{int32} \\
-\psi :=& \text{element } \psi \\
+\text{e\_list} :=& \text{element } \text{e\_list}\\
 &| \ \text{""} \\
 \text{element}	:=& \text{unscoped} \\
 &| \ \text{scoped} \\
@@ -168,37 +216,7 @@ As might be easily noticed from the figure, parsly does not serialize the name o
 
 Therefore, by tuning the size of length indicator of the scoped field and compiletime type erasure, parsly can theoretically achive a higher space efficiency and time efficiency than Google's \textit{protobuf} (benchmark is not the subject of this paper). \\
 
-
-
-
-\subsection{Design}
-Parsly is designed to be light-weight and portable, and works on UNIX operating systems as well as Windows. It consists of two parts, a C++ library called \textit{libagio} and a protocol compiler called \textit{pop}. Parsly implements this library (\textit{libagio}), which simplifies parsing logic for the compiler to easily work with. Taking the advantage of the modern C++ template, it is able to do many compile-time optimization for the serialization algorithms. As for the compiler, it is implemented in Python to achieve a high portability and lower cost of maintainance. 
-
-To compile a network application, the user needs to go through three steps. First, design and write the protocol in JSON, with the attributes and formats provided by parsly. Then the user runs \textit{pop} by supplying the JSON protocol description and the target C++ output source file. \textit{Pop} will compile the protocol description into C++ code written with the \textit{libagio}'s API, and inject the code into the parsing function of the C++ source code. The user is then able to run the C++ compiler to build the application.
-
-
-\begin{figure}
-\begin{center}
-\lstset{language=c++}
-\begin{lstlisting}
-message Request {
-  string query = 1;
-  int32 page_number = 2;
-  int32 result_per_page = 3;
-}
-
-message Response {
- ...
-}
-\end{lstlisting}
-\caption{protocol described in proto3 language}
-\label{lst:proto3}
-\end{center}
-\end{figure}
-
-
-\begin{figure}
-\begin{center}
+\begin{figure}[b]
 \lstset{language=c++}
 \begin{lstlisting}
 {
@@ -223,11 +241,35 @@ message Response {
 \end{lstlisting}
 \caption{parsly protocol description in json}
 \label{lst:parslyJson}
-\end{center}
+\end{figure}
+
+\begin{figure}
+\lstset{language=c++, showlines=true}
+\begin{lstlisting}
+message Request {
+  string query = 1;
+  int32 page_number = 2;
+  int32 result_per_page = 3;
+}
+
+message Response {
+ ...
+}
+\end{lstlisting}
+\caption{protobuf protocol description in proto3}
+\label{lst:proto3}
 \end{figure}
 
 
 
-\section{Conclusion} % Unnumbered section
+
+
+
+\section{Conclusion and Limitations} % Unnumbered section
+To automate the process of implementation of protocol, we developed parsly, the protocol compiler. Parsly is similar to the existing protocol compiler \textit{protobuf}, but it has several advantages in terms of performance and usability.
+Parsly has a higher space efficiency, which is achieved by user tunable data length indicator and erasure of message field data types. More over, it replaced \textit{protobuf}'s DSL for protocol description by JSON, which is more flexible in terms of formal reasoning in proof driven development. 
+However, such a pre-compiler has the limit rage of target programing language, as it depends on a C++ library to provide a convenient parsign logic interface. This disadvantage can be overcomed by re-implementation on other programing languages that supports generics.
+
+
 
 \end{document}
