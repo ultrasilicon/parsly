@@ -3,7 +3,10 @@
 \usepackage{proof}
 \usepackage{tikz}
 \usepackage{hyperref}
-\usetikzlibrary{automata,positioning}
+\usepackage{chngcntr}
+\usepackage{microtype}
+\counterwithin{figure}{section}
+\usetikzlibrary{fit,automata,positioning}
 \input{structure.tex} 
 
 \title{Parsly: Procedureless Protocol Compiler\\
@@ -22,13 +25,12 @@
 \subsection{The Cycle of Protocol Development}
 \begin{figure}[h!]
 \begin{center}
-\label{fig:developmentCycle}
 \begin{tikzpicture}[
 	shorten >=1pt,
 	node distance=2.5cm, 
 	on grid, 
 	auto, 
-	scale=0.6, 
+	scale=0.7, 
     transform shape, 
     align=center, 
     state/.style={
@@ -50,6 +52,7 @@
     (q_2) edge [bend left, below] node {} (q_0);
 \end{tikzpicture}
 \caption{development cycle}
+\label{fig:developmentCycle}
 \end{center}
 \end{figure}
 
@@ -62,13 +65,12 @@ To better illustrate the process of protocol development, we divide it into four
 
 \begin{figure}[h!]
 \begin{center}
-\label{fig:newDevelopmentCycle}
 \begin{tikzpicture}[
 	shorten >=1pt,
 	node distance=3cm, 
 	on grid, 
 	auto, 
-	scale=0.6, 
+	scale=0.7, 
     transform shape, 
     align=center, 
     state/.style={
@@ -86,6 +88,7 @@ To better illustrate the process of protocol development, we divide it into four
     (q_2) edge [bend left, below] node {failure} (q_0);
 \end{tikzpicture}
 \caption{new development cycle}
+\label{fig:newDevelopmentCycle}
 \end{center}
 \end{figure}
 
@@ -96,26 +99,25 @@ Protocol compiler is a tool that helps automate the process of network protocol 
 
 \section{Limitation of Current Methods}
 
-There are several protocol compilers that exists. The most commonly used one is Google's \textit{Protocol Buffers} (also known as \textit{protobuf}). Protobuf takes in a protocol declaration in their DSL called \textit{proto3} (see fig~\ref{lst:proto3}) and generates the parsing logic in a popular collection of programing languages. During the runtime, \textit{protobuf} uses BSON, the binary representation of JavaScript Object Notation (JSON), to serialize and deserialise the messages. This has given programmers the convenience to handle the data by storing the message in JSON format.\\
+There are several protocol compilers that exists. The most commonly used one is Google's \textit{Protocol Buffers} (also known as \textit{protobuf}). Protobuf takes in a protocol declaration in their DSL called \textit{proto3} (fig~\ref{lst:proto3}) and generates the parsing logic in a popular collection of programing languages. During the runtime, \textit{protobuf} uses BSON, the binary representation of JavaScript Object Notation (JSON), to serialize and deserialise the messages. This has given programmers the convenience to handle the data by storing the message in JSON format.\\
 
 However, there are several drawbacks in \textit{protobuf}. These drawbakcs mainly lies in the aspect of learning curve, performance, and correcness proving with formal verification.\\
 
 First of all, although \textit{protobuf} has a well-designed DSL that concisely describes the protocol, it is one more language for the programer to learn and one more place to make mistakes. The programers need to read the documentations and do some practices in order to get started, which makes it harder to be used in fast-paced agile developent theme.\\
 
-Speaking of performance, although \textit{protobuf} did a great job on space optimization by employing BSON for data serialization, BSON is not flexible enough for the users to tunne for optimization. We will talk about this in section~\ref{subsec:performanceAnalysis} \\
+Speaking of performance, although \textit{protobuf} did a great job on space optimization by employing BSON for data serialization, BSON is not flexible enough for the users to tunne for optimization. Besides, \textit{protobuf} serializes message field type names into the message, which can be redundant therefore unnecessary. We will talk about this in section~\ref{subsec:performanceAnalysis} \\
 
 Moreover, when it comes to proof driven deveolpment, where, in order to prove the correctness of the implementation of the protocol, the developer needs to get the formal specification of the DSL. However, the specificaiton is not officially available, and even if it will be available in the future, it means more work for the developer, as there is one more layer of language to reason about. \\
 
 
 \section{Parsly}
-Therefore we introduce parsly, a protocol compiler that compiles protocol descriptions in JSON to C++ parsing logics. Parsley implements a serialization method that is similar to the BSON format but gives user more freedom of space optimizations. 
+Therefore we introduce parsly, a protocol compiler that compiles protocol descriptions in JSON to C++ parsing logics. Parsley implements a serialization method that is similar to the BSON format but gives user more freedom of space optimizations. \\
 
 \label{subsec:performanceAnalysis}
 \subsection{Performance Analysis}
-According to the BSON's \href{http://bsonspec.org}{documentation}, BSON is designed to be efficient in space, but in some cases it uses even more space than JSON. BSON adds the length of strings and subobjects which makes traversal faster.
+According to the BSON's \href{http://bsonspec.org}{documentation}, BSON is designed to be efficient in space, but in some cases it uses even more space than JSON because it adds the length indicator of strings and subobjects which makes traversal faster.\\
 
 \begin{figure}[h!]
-\label{eq:bsonGrammar}
 \begin{align*}
 \text{document} :=&  \text{int32 e\_list "\textbackslash x00" } \\
 \text{e\_list} :=& \text{element e\_list} \\
@@ -134,12 +136,12 @@ According to the BSON's \href{http://bsonspec.org}{documentation}, BSON is desig
 &| \ \cdots 
 \end{align*}
 \caption{BSON standard v1.1 grammar}
+\label{eq:bsonGrammar}
 \end{figure}
 
-BSON uses 32-bit integer to indicate the length of the strings, binaries, as well as the whole document, and this is fixed by the specification (see fig~\ref{eq:bsonGrammar}). Therefore, no matter how long the string, binary or the document is, the length of the bytes that describes the data is fixed. This has left no space for user to optimize for space. For a message containing massive short strings, BSON will not perform well at all. 
+BSON uses 32-bit integer (int32) to indicate the length of the strings, binaries, as well as the document, and this is fixed by the specification, see fig~\ref{eq:bsonGrammar}. Therefore, no matter how long the string, binary or the document is, the length of the bytes that describes the data is fixed. This has left no space for user to optimize for space. For a message containing massive short strings, BSON will not perform well at all.  \\
 
 \begin{figure}[h!]
-\label{eq:parslyGrammar}
 \begin{align*}
 M :=& \phi \ \psi \\
 \phi :=& \text{int8} \\
@@ -147,50 +149,83 @@ M :=& \phi \ \psi \\
 &| \ \text{int32} \\
 \psi :=& \text{element } \psi \\
 &| \ \text{""} \\
-\text{int} :=& \text{int8} \\
+\text{element}	:=& \text{unscoped} \\
+&| \ \text{scoped} \\
+\text{unscoped} :=& \text{int8} \\
 &| \ \text{int16} \\
 &| \ \text{int32} \\
 &| \ \text{int64} \\
 &| \ \text{int128} \\
-\text{binary} :=& \phi  \text{ (byte*)} \\
-\text{element}	:=& \text{int} \\
-&| \ \text{binary} 
+\text{scoped} :=& \phi  \text{ (byte*)} 
 \end{align*}
 \caption{parsly serialization grammar}
+\label{eq:parslyGrammar}
 \end{figure}
 
-Parsly employs the same method for data serialization for performance, however, the length indicator size can be controlled by the user in the JSON description. This is achieved by extending the indicator $\phi$ to multiple sized data types like int8, int16 and int32, see fig~\ref{eq:parslyGrammar} (notice that parsly does not serialize the name of any data types).
+Parsly employs the same method for data serialization for performance with the difference that the length indicator size can be controlled by the user in the JSON description. This is achieved by extending the indicator $\phi$ to multiple sized data types like int8, int16 and int32, see fig~\ref{eq:parslyGrammar}. \\
+
+As might be easily noticed from the figure, parsly does not serialize the name of any data types. To save even more space, parsly ignores all the type names in serialization process. It only judges a message field to be of two types: scoped or unscoped. The scoped field is a section of field guarded by a length indicator, while the unscoped field is of the fixed-sized basic types like int8, int16 and int 32. This not only saves the space to store the type names and the length indicators of the type names, but also makes the deserialization much faster because the mapping from the message field to the data type is already decided at the compile time by parsly.  \\
+
+Therefore, by tuning the size of length indicator of the scoped field and compiletime type erasure, parsly can theoretically achive a higher space efficiency and time efficiency than Google's \textit{protobuf} (benchmark is not the subject of this paper). \\
+
+
+
+
+\subsection{Design}
+Parsly is designed to be light-weight and portable, and works on UNIX operating systems as well as Windows. It consists of two parts, a C++ library called \textit{libagio} and a protocol compiler called \textit{pop}. Parsly implements this library (\textit{libagio}), which simplifies parsing logic for the compiler to easily work with. Taking the advantage of the modern C++ template, it is able to do many compile-time optimization for the serialization algorithms. As for the compiler, it is implemented in Python to achieve a high portability and lower cost of maintainance. 
+
+To compile a network application, the user needs to go through three steps. First, design and write the protocol in JSON, with the attributes and formats provided by parsly. Then the user runs \textit{pop} by supplying the JSON protocol description and the target C++ output source file. \textit{Pop} will compile the protocol description into C++ code written with the \textit{libagio}'s API, and inject the code into the parsing function of the C++ source code. The user is then able to run the C++ compiler to build the application.
+
 
 \begin{figure}
 \begin{center}
 \lstset{language=c++}
-\label{lst:proto3}
 \begin{lstlisting}
-message Person {
-  required string name = 1;
-  required int32 id = 2;
-  optional string email = 3;
+message Request {
+  string query = 1;
+  int32 page_number = 2;
+  int32 result_per_page = 3;
+}
 
-  enum PhoneType {
-    MOBILE = 0;
-    HOME = 1;
-    WORK = 2;
-  }
-
-  message PhoneNumber {
-    required string number = 1;
-    optional PhoneType type = 2 [default = HOME];
-  }
-
-  repeated PhoneNumber phone = 4;
+message Response {
+ ...
 }
 \end{lstlisting}
 \caption{protocol described in proto3 language}
+\label{lst:proto3}
 \end{center}
 \end{figure}
 
 
-\section{Analysis} % Unnumbered section
+\begin{figure}
+\begin{center}
+\lstset{language=c++}
+\begin{lstlisting}
+{
+	"version" : [0, 1, 0],
+	"protocol" : {
+		"header" : 4,
+		"flags" : ["Request", "Response"]
+	},
+
+	"fields" : {
+		"Request" : [
+			["string", "query"],
+			["uint32", "page_number"],
+			["uint32", "result_per_page"],
+		],
+	
+		"Response" : [
+			...
+		],
+	}
+}
+\end{lstlisting}
+\caption{parsly protocol description in json}
+\label{lst:parslyJson}
+\end{center}
+\end{figure}
+
 
 
 \section{Conclusion} % Unnumbered section
