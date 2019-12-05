@@ -216,7 +216,7 @@ As might be easily noticed from the figure, parsly does not serialize the name o
 
 Therefore, by tuning the size of length indicator of the scoped field and compiletime type erasure, parsly can theoretically achive a higher space efficiency and time efficiency than Google's \textit{protobuf} (benchmark is not the subject of this paper). \\
 
-\begin{figure}[b]
+\begin{figure}[h!]
 \lstset{language=c++}
 \begin{lstlisting}
 {
@@ -243,7 +243,7 @@ Therefore, by tuning the size of length indicator of the scoped field and compil
 \label{lst:parslyJson}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h!]
 \lstset{language=c++, showlines=true}
 \begin{lstlisting}
 message Request {
@@ -259,10 +259,6 @@ message Response {
 \caption{protobuf protocol description in proto3}
 \label{lst:proto3}
 \end{figure}
-
-
-
-
 
 
 \section{Conclusion and Limitations} % Unnumbered section
