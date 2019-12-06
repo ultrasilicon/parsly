@@ -3,8 +3,11 @@
 #include "common.h"
 #include "../include/parse_engine.h"
 
+#include <libagio/protocol_utils.h>
+
 
 using namespace std;
+using namespace Agio::ProtocolUtils;
 
 TEST(TestRedeemVal, SingleLayerPacket)
 {
